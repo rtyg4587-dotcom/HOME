@@ -38,6 +38,17 @@
   .price{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.01em}
   .price .cur{color:var(--muted);font-size:18px;font-weight:500}
 
+  /* 히어로 핵심 요약 스트립 */
+  .hero-action{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+  .ha-item{flex:1;min-width:0}
+  .ha-k{font-size:10px;color:var(--faint);letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:5px}
+  .ha-v{font-size:14px;font-weight:700;letter-spacing:-.01em;line-height:1.25;display:block;color:var(--muted)}
+  .ha-v.buy{color:var(--buy)} .ha-v.sell{color:var(--sell)} .ha-v.wait{color:var(--wait)}
+  .ha-v.hold{color:var(--hold)} .ha-v.none{color:var(--muted)}
+  /* 카드 상태 닷 (스캔용) */
+  .dot.buy{background:var(--buy)!important} .dot.sell{background:var(--sell)!important}
+  .dot.wait{background:var(--wait)!important} .dot.hold{background:var(--hold)!important}
+
   /* CYCLE TRACK (signature) */
   .track-wrap{margin-top:24px}
   .track-label{font-size:11px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
@@ -128,7 +139,7 @@
   .panel.active{display:block}
 
   /* 비밀번호 잠금 */
-  .lock{position:fixed;inset:0;z-index:100;background:var(--ink,#0c0f14);display:flex;align-items:center;justify-content:center;padding:24px}
+  .lock{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
   .lock-box{width:100%;max-width:300px;text-align:center}
   .lock-icon{font-size:34px;margin-bottom:14px}
   .lock-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:18px}
@@ -140,7 +151,7 @@
     background:var(--gold);color:#1a1407;cursor:pointer;font-family:inherit;margin-top:4px}
   .pw-reset{font-size:11px;color:var(--faint);margin-top:16px;cursor:pointer;text-decoration:underline}
   .fa-btn{background:transparent;color:var(--gold);border:1px solid var(--gold);margin-bottom:12px}
-  .chart-leg{display:flex;gap:14px;margin-top:11px;font-size:11px;color:var(--muted)}
+  .chart-leg{display:flex;gap:12px;margin-top:11px;font-size:11px;color:var(--muted);flex-wrap:wrap}
   .chart-leg i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:5px}
   .chart-leg .lg-price{border-color:var(--text)}
   .chart-leg .lg-sma{border-color:var(--hold)}
@@ -214,6 +225,11 @@
     <div class="verdict" id="verdict"><span class="skeleton">데이터 불러오는 중…</span></div>
     <div class="verdict-sub" id="verdictSub"></div>
     <div class="price-row"><div class="price" id="price">—</div></div>
+
+    <div class="hero-action">
+      <div class="ha-item"><span class="ha-k">전략 단계</span><span class="ha-v none" id="heroStage">—</span></div>
+      <div class="ha-item"><span class="ha-k">조정 임박</span><span class="ha-v none" id="heroAlert">—</span></div>
+    </div>
 
     <div class="track-wrap">
       <div class="track-label">4년 반감기 사이클</div>
@@ -301,7 +317,7 @@
     </div>
 
     <div class="card">
-      <h3><span class="dot"></span>일봉 진입 신호</h3>
+      <h3><span class="dot" id="entryDot"></span>일봉 진입 신호</h3>
       <div class="entry-step none" id="entryStep">—</div>
       <div class="entry-note" id="entryNote"></div>
       <div class="rows">
@@ -311,6 +327,8 @@
         <div class="r"><span class="k">단기 스토 (5,3,3)</span><span class="v" id="stoShort">—</span></div>
         <div class="r"><span class="k">장기 스토 (20,12,12)</span><span class="v" id="stoLong">—</span></div>
         <div class="r"><span class="k">스토 신호</span><span class="v" id="stoSig">—</span></div>
+        <div class="r"><span class="k">장기 스토 임베디드</span><span class="v" id="stoEmb">—</span></div>
+        <div class="r"><span class="k">조정 임박 경보</span><span class="v" id="preAlert">—</span></div>
       </div>
       <details class="help"><summary>해석 방법 · 언제 진입하나</summary><div class="body">
         중간조정은 <b>4단계</b>로 나눠 진입합니다.
@@ -320,12 +338,13 @@
         <div class="st"><span class="n">4</span><b>종료 확인</b> — 종가가 30일선 회복 = 추세 복귀. <b>단 가짜돌파(휩쏘)가 많습니다</b> — 과거 의미있는 돌파의 <b>50%가 5일 내 재하회</b>. <b>14일(≈2주) 이상 상회 유지돼야 조정 종료</b>로 봅니다(유지 시 이후 60일 +20~60%). 표에 <b>'무효·재하회'</b>면 가짜돌파, <b>'유지 N일·확정'</b>이면 진짜입니다.</div>
         <div class="st">→ <b>★저점 확정</b>에서 분할로 본진입, <b>종료 확인</b> 이후의 추격은 보수적으로.</div>
         <div class="st" style="margin-top:11px;border-top:1px solid var(--line);padding-top:9px"><b>스토캐스틱(조정 시작 추론)</b> — <b>장기(20,12,12) 과매수(80↑) 데드크로스</b>는 일봉밴드 이탈을 <b>평균 10일 선행</b>(과거 65%)하는 가장 빠른 조정 경고입니다. <b>단기(5,3,3) 과매도 반등 크로스</b>는 2단계(조기 분할) 타이밍. 단 선행 신호라 단독 확정 말고 밴드 이탈·깊이와 함께 보세요.</div>
+        <div class="st" style="margin-top:11px;border-top:1px solid var(--line);padding-top:9px"><b>장기 스토 임베디드 · 조정 임박 경보</b> — 강한 추세에선 장기 스토가 과매수(80↑)에 <b>오래 박혀(임베디드)</b> 그라인딩합니다. 임베디드 일수는 <b>타이머가 아니라 '추세 성숙·경계'</b> 신호(과거 30~66일 편차). 실제 타이밍은 <b>임베디드의 '이탈(데드크로스)'</b>이 줍니다. <b>임박 경보</b> 단계: 낮음 → <b>경계</b>(과매수 진입) → <b>주의</b>(과매수 30일+ 성숙) → <b>임박 경고</b>(데드크로스 — 헤지 준비). 사이클마다 과매수가 앞당겨지는 추세라(2024 ETF 선반영), 달력보다 이 신호 흐름을 보세요.</div>
         <div class="st" style="margin-top:11px;border-top:1px solid var(--line);padding-top:9px"><b>중간조정 vs Q4 최종조정</b> — 둘 다 유효하지만 신뢰도가 다릅니다. <b>상승기 중간조정</b>(Q1~Q3)에선 큰 추세가 위라 다이버전스 진입이 잘 맞습니다. <b>Q4 하락기</b>에선 같은 신호가 반복해서 뜨지만 데드캣 바운스가 많아, <b>주봉 200주선 도달 + %B&lt;0.2 같은 사이클 바닥신호가 함께 떠야</b> 신뢰할 수 있습니다(낙폭 큰 칼날 잡기 주의). 표에 <b>'추세중·미확정'</b>으로 뜨면 바닥 신호 전이라 신뢰하지 마세요 — 예: 2025년 천장(10월) 직후의 12월 반등도 이런 미확정 신호였습니다.</div>
       </div></details>
     </div>
 
     <div class="card">
-      <h3><span class="dot"></span>중간조정 판별</h3>
+      <h3><span class="dot" id="midDot"></span>중간조정 판별</h3>
       <div class="entry-step none" id="midVerdict">—</div>
       <div class="entry-note" id="midNote"></div>
       <div class="rows">
@@ -352,6 +371,19 @@
 
   <div class="panel" id="p-strategy">
     <div class="grid">
+    <div class="card">
+      <h3><span class="dot" id="pbDot"></span>전략 단계 (Playbook)</h3>
+      <div class="entry-step none" id="pbStage">—</div>
+      <div class="entry-note" id="pbNote"></div>
+      <details class="help"><summary>사이클 전략 단계 안내</summary><div class="body">
+        사이클 매매 전략에 맞춘 단계 신호입니다:<br><br>
+        <b>① 현물 매집</b> — 저점권: BTC:ETH <b>6:4</b> 분할 매집<br>
+        <b>② 롱 확대</b> — 상승 확인: 코인-M 롱으로 <b>BTC 수량↑</b>, ETH 현물은 그대로<br>
+        <b>③ 헤지 / 조정</b> — 조정 임박(데드크로스)·진행: <b>롱 일부 청산 + 동일물량 숏</b>, 조정 중 수량 최대 확대<br>
+        <b>④ 롱 청산 + 숏 매집</b> — 천장권: 롱 전량 청산, 숏 매집으로 다음 하락 대비<br><br>
+        ※ <b>현물 일부 익절</b>은 상승·천장 구간에서 병행하세요. 이 신호는 보조 판단이며 <b>분할·확인 매매</b>가 전제입니다. ③ 헤지 타이밍은 신호 탭의 <b>조정 임박 경보</b>와 함께 보세요.
+      </div></details>
+    </div>
     <div class="card">
       <h3><span class="dot"></span>매집 추천 (DCA)</h3>
       <div class="entry-step none" id="accBadge">—</div>
@@ -669,6 +701,16 @@ function analyze(btc){
   else if(kL!=null&&kL<20){stSig="장기 과매도 — 바닥 근접";stCls="up";}
   else{stSig="중립";stCls="";}
 
+  // 임베디드 경과: 장기 스토 과매수(>80) 연속일 (추세 성숙도)
+  let embDays=0;
+  for(let i=dn-1;i>=0;i--){ if(stL.K[i]!=null&&stL.K[i]>80) embDays++; else break; }
+  // 조정 임박 경보 (선행 신호 결합: 데드크로스 + 임베디드 성숙 + 과매수)
+  let preAlert,preCls;
+  if(stWarn){ preAlert=`임박 경고 — 장기 데드크로스 (~10일 내 조정 가능)`; preCls="down"; }
+  else if(kL!=null&&kL>80&&embDays>=30){ preAlert=`주의 — 과매수 ${embDays}일 지속(성숙)`; preCls="down"; }
+  else if(kL!=null&&kL>80){ preAlert="경계 — 과매수권 진입"; preCls=""; }
+  else{ preAlert="낮음 — 임박 신호 없음"; preCls=""; }
+
   // ===== 중간조정 판별 모듈 =====
   const winHi=Math.max(...wc.slice(Math.max(0,wc.length-104)));   // 최근 104주 고점
   const dd=(price/winHi-1)*100;                                    // 고점 대비 낙폭(%)
@@ -704,7 +746,23 @@ function analyze(btc){
 
   return{price,asof,msh,phase,dir,trend,top,bot,rW,dist200w,mayer,pb365,col,verdict,sub,action,entry,acc,accCls,
     dd,wkBelow,midScore,midVerdict,midCls,midNote,seasonTxt,seasonCls,
-    k1,d1,kL,dL,stSig,stCls};
+    k1,d1,kL,dL,stSig,stCls,stWarn,embDays,preAlert,preCls};
+}
+
+// 전략 단계 (사이클 매매 Playbook)
+function playbook(s){
+  const corrNow = s.entry && s.entry.corrNow;
+  if(s.col==="천장")
+    return {stage:"④ 롱 전량 청산 + 숏 매집", note:"사이클 고점권 — 롱 정리, 숏으로 다음 하락 대비", cls:"sell", short:"④ 롱청산·숏매집"};
+  if(s.col==="조정" || corrNow)
+    return {stage:"③ 조정 진행 — 롱 축소·숏 헤지 + 저점 매집", note:"조정 중 현물·숏 수량 최대 확대", cls:"wait", short:"③ 조정·헤지"};
+  if(s.stWarn)
+    return {stage:"③ 헤지 준비 — 롱 일부 청산 + 동일물량 숏", note:"조정 임박(장기 데드크로스) — 헤지 세팅", cls:"wait", short:"③ 헤지 준비"};
+  if(s.col==="바닥")
+    return {stage:"① 현물 매집 (BTC:ETH 6:4)", note:"사이클 저점권 — 현물 분할 매집", cls:"buy", short:"① 현물 매집"};
+  if(s.col==="상승")
+    return {stage:"② 롱 확대 (코인-M 수량↑)", note:"사이클 진행 — BTC 롱 확대, ETH 현물 유지", cls:"buy", short:"② 롱 확대"};
+  return {stage:"관망", note:"신호 대기", cls:"none", short:"관망"};
 }
 
 function projection(){
@@ -775,6 +833,29 @@ function render(s,stable){
   $("stoShort").textContent = s.k1!=null?`K ${Math.round(s.k1)} / D ${Math.round(s.d1)}`:"—";
   $("stoLong").textContent = s.kL!=null?`K ${Math.round(s.kL)} / D ${Math.round(s.dL)}`:"—";
   $("stoSig").innerHTML = `<span class="${s.stCls}">${s.stSig}</span>`;
+  $("stoEmb").innerHTML = s.embDays>0?`${s.embDays}일${s.embDays>=30?' <span style="color:var(--muted);font-size:11px">(성숙)</span>':''}`:"—";
+  $("preAlert").innerHTML = `<span class="${s.preCls}">${s.preAlert}</span>`;
+
+  // 전략 단계 (Playbook)
+  const pb=playbook(s);
+  $("pbStage").textContent=pb.stage;
+  $("pbStage").className="entry-step "+pb.cls;
+  $("pbNote").textContent=pb.note;
+
+  // 히어로 핵심 요약 (상시 노출)
+  $("heroStage").textContent=pb.short;
+  $("heroStage").className="ha-v "+pb.cls;
+  let alShort,alCls;
+  if(s.preAlert.includes("임박 경고")){alShort="임박 경고";alCls="sell";}
+  else if(s.preAlert.includes("주의")){alShort="주의 (성숙)";alCls="sell";}
+  else if(s.preAlert.includes("경계")){alShort="경계";alCls="wait";}
+  else{alShort="낮음";alCls="none";}
+  $("heroAlert").textContent=alShort;
+  $("heroAlert").className="ha-v "+alCls;
+  // 카드 상태 닷 (스캔용)
+  $("pbDot").className="dot "+pb.cls;
+  if(s.entry&&s.entry.cls) $("entryDot").className="dot "+s.entry.cls;
+  if(s.midCls) $("midDot").className="dot "+(s.midCls==="hold"?"":s.midCls);
 
   // 매집 추천
   $("accBadge").textContent="매집 "+s.acc;
