@@ -127,6 +127,7 @@
   .dir .dirlbl{font-size:11px;color:var(--ink-soft);margin-right:2px;}
   .dir a{font-size:12px;text-decoration:none;color:var(--pharm-deep);background:var(--pharm-soft);border:1px solid #CFE3D9;border-radius:999px;padding:5px 11px;}
   .dir a:hover{background:#DCEFE4;}
+  .locbtn{width:auto;display:inline-flex;align-items:center;gap:6px;padding:9px 14px;font-size:13px;margin:-4px 0 14px;}
 
   .cmpbar{position:fixed;left:0;right:0;bottom:var(--nav-h);max-width:var(--maxw);margin:0 auto;background:var(--surface);border-top:1px solid var(--line-2);padding:11px 16px;display:none;align-items:center;gap:12px;z-index:30;}
   .cmpbar.show{display:flex;}
@@ -222,7 +223,7 @@ const T={
     cmp_ingredient:"Ingredient", cmp_strength:"Use level", cmp_price:"Price", cmp_online:"Online",
     cmp_tip:"Cosmetics show buy links; medicines show information only.", cmp_empty:"Pick items in Search or your picks to compare them.",
     find_ph:"Find a pharmacy nearby", ph_title:"Pharmacies near you", ph_sub:"Real pharmacies nearby. ✓ = known K-beauty stores.",
-    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_verified:"K-beauty", ph_tax:"Tax refund", ph_english:"English",
+    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_verified:"K-beauty", ph_relocate:"📍 Update my location", ph_tax:"Tax refund", ph_english:"English",
     ph_note:"Popular K-beauty items (PDRN creams, Madecassol, acne creams) are stocked at most pharmacies. ✓ marks well-known beauty pharmacies. We don't track live stock — show the Korean product name to the pharmacist to check or order.",
     foot:"This app provides general information and is not medical advice. Medicines are shown for information only and cannot be purchased through this app. Always consult a pharmacist."
   },
@@ -246,7 +247,7 @@ const T={
     cmp_ingredient:"成分", cmp_strength:"使用レベル", cmp_price:"価格", cmp_online:"オンライン",
     cmp_tip:"化粧品は購入リンク、医薬品は情報のみ表示します。", cmp_empty:"検索またはおすすめから商品を選んで比較してください。",
     find_ph:"近くの薬局を探す", ph_title:"近くの薬局", ph_sub:"近くの実在薬局。✓＝有名なK-ビューティ薬局。",
-    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_verified:"K-ビューティ", ph_tax:"免税", ph_english:"英語可",
+    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_verified:"K-ビューティ", ph_relocate:"📍 現在地を更新", ph_tax:"免税", ph_english:"英語可",
     ph_note:"人気のK-ビューティ製品（PDRNクリーム、マデカソル、ニキビクリーム等）はほとんどの薬局で扱っています。✓は有名なビューティ薬局です。在庫はリアルタイムで把握していません。韓国語の製品名を薬剤師に見せて確認・取り寄せてください。",
     foot:"本アプリは一般情報であり医療助言ではありません。医薬品は情報提供のみで、本アプリでは購入できません。必ず薬剤師にご相談ください。"
   },
@@ -270,7 +271,7 @@ const T={
     cmp_ingredient:"成分", cmp_strength:"使用强度", cmp_price:"价格", cmp_online:"在线",
     cmp_tip:"化妆品显示购买链接；药品仅显示信息。", cmp_empty:"在搜索或推荐中选择产品进行对比。",
     find_ph:"查找附近药局", ph_title:"附近的药局", ph_sub:"附近的真实药局。✓＝知名K-美妆药局。",
-    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_verified:"K-美妆", ph_tax:"退税", ph_english:"可英文",
+    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_verified:"K-美妆", ph_relocate:"📍 更新我的位置", ph_tax:"退税", ph_english:"可英文",
     ph_note:"热门K-美妆产品（PDRN面霜、马德卡索、祛痘霜等）大多数药局都有售。✓为知名美妆药局。我们不追踪实时库存——请把韩文产品名出示给药师确认或订购。",
     foot:"本应用仅提供一般信息，非医疗建议。药品仅供信息参考，无法通过本应用购买。请务必咨询药师。"
   },
@@ -294,7 +295,7 @@ const T={
     cmp_ingredient:"成分", cmp_strength:"使用強度", cmp_price:"價格", cmp_online:"線上",
     cmp_tip:"化妝品顯示購買連結；藥品僅顯示資訊。", cmp_empty:"在搜尋或推薦中選擇產品進行比較。",
     find_ph:"尋找附近藥局", ph_title:"附近的藥局", ph_sub:"附近的真實藥局。✓＝知名K-美妝藥局。",
-    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_verified:"K-美妝", ph_tax:"退稅", ph_english:"可英文",
+    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_verified:"K-美妝", ph_relocate:"📍 更新我的位置", ph_tax:"退稅", ph_english:"可英文",
     ph_note:"熱門K-美妝產品（PDRN面霜、馬德卡索、祛痘霜等）大多數藥局都有售。✓為知名美妝藥局。我們不追蹤即時庫存——請把韓文產品名出示給藥師確認或訂購。",
     foot:"本應用僅提供一般資訊，非醫療建議。藥品僅供資訊參考，無法透過本應用購買。請務必諮詢藥師。"
   }
@@ -528,6 +529,7 @@ function screenCompare(){
 function screenPharmacy(){
   return `<h1>${t("ph_title")}</h1><p class="lede">${t("ph_sub")}</p>
     <div class="map" id="kkmap">${t("ph_loading")}</div>
+    <button class="btn ghost locbtn" id="relocateBtn" onclick="relocatePharmacy()">${t("ph_relocate")}</button>
     <div id="phlist"></div>
     <div class="note info">${t("ph_note")}</div>${footer()}`;
 }
@@ -576,9 +578,23 @@ function ensureNaver(){
 function drawMap(lat,lng,list){
   const el=$("#kkmap"); if(!el) return;
   el.textContent=""; el.style.display="block";
-  const map=new naver.maps.Map(el,{center:new naver.maps.LatLng(lat,lng),zoom:13});
-  new naver.maps.Marker({position:new naver.maps.LatLng(lat,lng),map,icon:{content:'<div style="width:16px;height:16px;background:#185FA5;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #185FA5;"></div>',anchor:new naver.maps.Point(8,8)}});
-  list.forEach(p=>new naver.maps.Marker({position:new naver.maps.LatLng(p.lat,p.lng),map}));
+  const map=new naver.maps.Map(el,{center:new naver.maps.LatLng(lat,lng),zoom:14});
+  // my location — RED dot
+  new naver.maps.Marker({position:new naver.maps.LatLng(lat,lng),map,zIndex:1000,
+    icon:{content:'<div style="width:16px;height:16px;background:#E11D48;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #E11D48;"></div>',anchor:new naver.maps.Point(8,8)}});
+  const iw=new naver.maps.InfoWindow({borderWidth:0,backgroundColor:"transparent",disableAnchor:true,pixelOffset:new naver.maps.Point(0,-6)});
+  list.forEach(p=>{
+    const mk=new naver.maps.Marker({position:new naver.maps.LatLng(p.lat,p.lng),map,title:p.nmKo});
+    naver.maps.Event.addListener(mk,"click",()=>{
+      iw.setContent(`<div style="padding:9px 12px;max-width:230px;background:#fff;border:1px solid #D8DAD2;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.14);font-family:sans-serif;">
+        <div style="font-weight:600;font-size:13px;color:#1A1F1C;">${p.verified?"✓ ":""}${p.nmKo}</div>
+        <div style="color:#5C635E;font-size:12px;margin-top:2px;">◉ ${fmtDist(p._d)}${p.area?" · "+p.area:""}</div>
+        ${p.lines?`<div style="color:#155C43;font-size:11px;margin-top:4px;">${p.lines}</div>`:""}
+      </div>`);
+      iw.open(map,mk);
+    });
+  });
+  naver.maps.Event.addListener(map,"click",()=>iw.close());
 }
 /* Live pharmacy data via Kakao category search (PM9 = pharmacy). Headless:
    loads only the 'services' library, no Kakao map shown. */
@@ -631,9 +647,10 @@ function initPharmacy(){
   const def={lat:37.5636,lng:126.9869}; // Myeongdong fallback
   if(state._coords) run(state._coords.lat,state._coords.lng);
   else if(navigator.geolocation)
-    navigator.geolocation.getCurrentPosition(p=>run(p.coords.latitude,p.coords.longitude),()=>run(def.lat,def.lng),{enableHighAccuracy:true,timeout:8000});
+    navigator.geolocation.getCurrentPosition(p=>run(p.coords.latitude,p.coords.longitude),()=>run(def.lat,def.lng),{enableHighAccuracy:true,timeout:10000,maximumAge:0});
   else run(def.lat,def.lng);
 }
+function relocatePharmacy(){ state._coords=null; initPharmacy(); }
 
 /* ---------- render ---------- */
 function render(){
