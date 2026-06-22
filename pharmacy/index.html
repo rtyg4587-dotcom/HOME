@@ -90,6 +90,15 @@
   .rx{margin-top:18px;border:1.5px dashed var(--pharm);border-radius:var(--radius);background:var(--pharm-soft);padding:18px 16px;text-align:center;}
   .rx .lbl{font-size:11px;color:var(--pharm-deep);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:6px;}
   .rx .ko{font-size:26px;font-weight:600;color:var(--ink);}
+  .stars{color:#E8A93B;letter-spacing:1px;}
+  .ratenum{color:var(--ink-soft);font-size:12px;}
+  .raterow{margin:2px 0 12px;font-size:14px;}
+  .famgroup{margin-bottom:12px;}
+  .fammembers{margin-left:14px;border-left:2px solid var(--line);padding-left:10px;margin-top:6px;display:flex;flex-direction:column;gap:8px;}
+  .card.member{background:#FAFAF6;}
+  .repbadge{display:inline-block;font-size:10px;font-weight:700;color:var(--pharm-deep);background:var(--pharm-soft);border:1px solid var(--pharm);border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;letter-spacing:.3px;}
+  .famnote{color:var(--ink-soft);font-size:12px;}
+  .rgnchip{display:inline-block;font-size:10px;font-weight:600;color:#0F5C8C;background:#E4F1FA;border:1px solid #B9DBF0;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
 
   .buy{margin-top:16px;}
   .buy a{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line-2);background:var(--surface);border-radius:var(--radius-sm);padding:13px 15px;margin-bottom:9px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;}
@@ -117,7 +126,13 @@
   .empty{color:var(--ink-soft);font-size:13px;text-align:center;padding:30px 10px;}
 
   .map{height:200px;border-radius:var(--radius);background:linear-gradient(135deg,#E5EDE8,#EEF1ED);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:13px;margin-bottom:16px;border:1px solid var(--line);overflow:hidden;}
-  .ph{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;}
+  .ph{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;cursor:pointer;transition:.12s;}
+  .ph:hover{border-color:var(--pharm);}
+  .phfilter{margin-bottom:14px;}
+  .phmeta{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+  .phmeta a{color:var(--pharm);text-decoration:none;}
+  .legend{display:flex;gap:14px;align-items:center;font-size:11px;color:var(--ink-soft);margin:-2px 0 12px;flex-wrap:wrap;}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle;border:1.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.15);}
   .ph .top{display:flex;justify-content:space-between;align-items:center;gap:8px;}
   .ph .nm{font-weight:600;font-size:15px;}
   .ph .tag{font-size:11px;color:var(--pharm);font-weight:500;white-space:nowrap;}
@@ -205,7 +220,7 @@ const LANGS=[
 const T={
   EN:{ brand:"K-Pharmacy Guide", tab_foryou:"For you", tab_search:"Search", tab_pharmacy:"Pharmacy",
     ob_title:"Tell us about your skin", ob_sub:"We'll match Korean pharmacy & cosmeceutical picks to your concern.",
-    ob_concern:"Main concern", ob_skin:"Skin type", ob_preg:"Pregnant or nursing?", yes:"Yes", no:"No", start:"See my picks",
+    ob_concern:"Main concern", ob_skin:"Skin type", ob_preg:"Pregnant or nursing?", yes:"Yes", no:"No", start:"See my picks", r_label:"Visiting from", r_japan:"Japan", r_china:"China/Taiwan", r_sea:"SE Asia", r_west:"Europe/Americas", r_other:"Other/Global", region_tip:"Popular with visitors from", region_pick:"regional fave",
     c_acne:"Acne", c_pigment:"Pigment / spots", c_scar:"Scars", c_aging:"Aging", c_barrier:"Barrier repair",
     s_oily:"Oily", s_combo:"Combination", s_dry:"Dry", s_sensitive:"Sensitive",
     rec_title:"Recommended for you", rec_sub:"Matched to", edit:"Edit",
@@ -217,19 +232,19 @@ const T={
     otc_disclaimer:"General information based on approved use. Not a recommendation. Ask a pharmacist before use.",
     rx_label:"Show this to the pharmacist", buy_at:"View on partner store", disclose:"Affiliate links — we may earn a commission. Cosmetics only.",
     add_compare:"Add to compare", added_compare:"In compare",
-    fam_title:"Same ingredient", fam_sub:"Other products with this ingredient",
+    fam_title:"Same ingredient", fam_sub:"Other products with this ingredient", rep_label:"Top pick", fam_more:"same-ingredient",
     alt_title:"Cosmetic alternative", alt_sub:"Daily-care options with a similar ingredient",
     cmp_title:"Compare", cmp_card:"Cards", cmp_table:"Table",
     cmp_ingredient:"Ingredient", cmp_strength:"Use level", cmp_price:"Price", cmp_online:"Online",
     cmp_tip:"Cosmetics show buy links; medicines show information only.", cmp_empty:"Pick items in Search or your picks to compare them.",
     find_ph:"Find a pharmacy nearby", ph_title:"Pharmacies near you", ph_sub:"Real pharmacies nearby. ✓ = known K-beauty stores.",
-    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_verified:"K-beauty", ph_relocate:"📍 Update my location", ph_tax:"Tax refund", ph_english:"English",
+    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_verified:"K-beauty", ph_relocate:"📍 Update my location", ph_all:"All", ph_beauty:"Beauty", ph_empty:"No pharmacies found nearby.", ph_details:"Details", ph_me:"You", ph_other:"Pharmacy", ph_tax:"Tax refund", ph_english:"English",
     ph_note:"Popular K-beauty items (PDRN creams, Madecassol, acne creams) are stocked at most pharmacies. ✓ marks well-known beauty pharmacies. We don't track live stock — show the Korean product name to the pharmacist to check or order.",
     foot:"This app provides general information and is not medical advice. Medicines are shown for information only and cannot be purchased through this app. Always consult a pharmacist."
   },
   JA:{ brand:"K-薬局ガイド", tab_foryou:"あなたに", tab_search:"検索", tab_pharmacy:"薬局",
     ob_title:"お肌について教えてください", ob_sub:"お悩みに合った韓国の薬局・ドクターズコスメをご提案します。",
-    ob_concern:"主な悩み", ob_skin:"肌タイプ", ob_preg:"妊娠・授乳中ですか？", yes:"はい", no:"いいえ", start:"おすすめを見る",
+    ob_concern:"主な悩み", ob_skin:"肌タイプ", ob_preg:"妊娠・授乳中ですか？", yes:"はい", no:"いいえ", start:"おすすめを見る", r_label:"どちらから？", r_japan:"日本", r_china:"中国/台湾", r_sea:"東南アジア", r_west:"欧米", r_other:"その他", region_tip:"この地域の旅行者に人気：", region_pick:"人気",
     c_acne:"ニキビ", c_pigment:"シミ・色素", c_scar:"傷あと", c_aging:"エイジング", c_barrier:"バリア補修",
     s_oily:"脂性", s_combo:"混合", s_dry:"乾燥", s_sensitive:"敏感",
     rec_title:"あなたへのおすすめ", rec_sub:"対象：", edit:"編集",
@@ -241,19 +256,19 @@ const T={
     otc_disclaimer:"承認された効能に基づく一般情報です。推奨ではありません。使用前に薬剤師にご相談ください。",
     rx_label:"薬剤師にこれを見せてください", buy_at:"提携ストアで見る", disclose:"アフィリエイトリンクです（化粧品のみ）。",
     add_compare:"比較に追加", added_compare:"比較中",
-    fam_title:"同じ成分", fam_sub:"この成分の他の製品",
+    fam_title:"同じ成分", fam_sub:"この成分の他の製品", rep_label:"代表", fam_more:"同成分",
     alt_title:"化粧品の代替", alt_sub:"近い成分のデイリーケア",
     cmp_title:"比較", cmp_card:"カード", cmp_table:"表",
     cmp_ingredient:"成分", cmp_strength:"使用レベル", cmp_price:"価格", cmp_online:"オンライン",
     cmp_tip:"化粧品は購入リンク、医薬品は情報のみ表示します。", cmp_empty:"検索またはおすすめから商品を選んで比較してください。",
     find_ph:"近くの薬局を探す", ph_title:"近くの薬局", ph_sub:"近くの実在薬局。✓＝有名なK-ビューティ薬局。",
-    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_verified:"K-ビューティ", ph_relocate:"📍 現在地を更新", ph_tax:"免税", ph_english:"英語可",
+    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_verified:"K-ビューティ", ph_relocate:"📍 現在地を更新", ph_all:"すべて", ph_beauty:"ビューティ", ph_empty:"近くに薬局が見つかりません。", ph_details:"詳細", ph_me:"現在地", ph_other:"薬局", ph_tax:"免税", ph_english:"英語可",
     ph_note:"人気のK-ビューティ製品（PDRNクリーム、マデカソル、ニキビクリーム等）はほとんどの薬局で扱っています。✓は有名なビューティ薬局です。在庫はリアルタイムで把握していません。韓国語の製品名を薬剤師に見せて確認・取り寄せてください。",
     foot:"本アプリは一般情報であり医療助言ではありません。医薬品は情報提供のみで、本アプリでは購入できません。必ず薬剤師にご相談ください。"
   },
   ZH:{ brand:"K-药局指南", tab_foryou:"为你", tab_search:"搜索", tab_pharmacy:"药局",
     ob_title:"告诉我们你的肤质", ob_sub:"我们会根据你的需求推荐韩国药局与药妆产品。",
-    ob_concern:"主要困扰", ob_skin:"肤质", ob_preg:"是否怀孕或哺乳？", yes:"是", no:"否", start:"查看推荐",
+    ob_concern:"主要困扰", ob_skin:"肤质", ob_preg:"是否怀孕或哺乳？", yes:"是", no:"否", start:"查看推荐", r_label:"来自哪里", r_japan:"日本", r_china:"中国/台湾", r_sea:"东南亚", r_west:"欧美", r_other:"其他", region_tip:"以下地区游客的热门：", region_pick:"热门",
     c_acne:"痘痘", c_pigment:"色斑", c_scar:"疤痕", c_aging:"抗老", c_barrier:"修护屏障",
     s_oily:"油性", s_combo:"混合", s_dry:"干性", s_sensitive:"敏感",
     rec_title:"为你推荐", rec_sub:"针对：", edit:"修改",
@@ -265,19 +280,19 @@ const T={
     otc_disclaimer:"基于批准功效的一般信息，并非推荐。使用前请咨询药师。",
     rx_label:"请把这个出示给药师", buy_at:"在合作商店查看", disclose:"含联盟链接（仅限化妆品）。",
     add_compare:"加入对比", added_compare:"对比中",
-    fam_title:"相同成分", fam_sub:"含此成分的其他产品",
+    fam_title:"相同成分", fam_sub:"含此成分的其他产品", rep_label:"代表", fam_more:"同成分",
     alt_title:"化妆品替代", alt_sub:"成分相近的日常护理",
     cmp_title:"对比", cmp_card:"卡片", cmp_table:"表格",
     cmp_ingredient:"成分", cmp_strength:"使用强度", cmp_price:"价格", cmp_online:"在线",
     cmp_tip:"化妆品显示购买链接；药品仅显示信息。", cmp_empty:"在搜索或推荐中选择产品进行对比。",
     find_ph:"查找附近药局", ph_title:"附近的药局", ph_sub:"附近的真实药局。✓＝知名K-美妆药局。",
-    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_verified:"K-美妆", ph_relocate:"📍 更新我的位置", ph_tax:"退税", ph_english:"可英文",
+    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_verified:"K-美妆", ph_relocate:"📍 更新我的位置", ph_all:"全部", ph_beauty:"美妆", ph_empty:"附近未找到药局。", ph_details:"详情", ph_me:"我", ph_other:"药局", ph_tax:"退税", ph_english:"可英文",
     ph_note:"热门K-美妆产品（PDRN面霜、马德卡索、祛痘霜等）大多数药局都有售。✓为知名美妆药局。我们不追踪实时库存——请把韩文产品名出示给药师确认或订购。",
     foot:"本应用仅提供一般信息，非医疗建议。药品仅供信息参考，无法通过本应用购买。请务必咨询药师。"
   },
   ZT:{ brand:"K-藥局指南", tab_foryou:"為你", tab_search:"搜尋", tab_pharmacy:"藥局",
     ob_title:"告訴我們你的膚質", ob_sub:"我們會依你的需求推薦韓國藥局與藥妝產品。",
-    ob_concern:"主要困擾", ob_skin:"膚質", ob_preg:"是否懷孕或哺乳？", yes:"是", no:"否", start:"查看推薦",
+    ob_concern:"主要困擾", ob_skin:"膚質", ob_preg:"是否懷孕或哺乳？", yes:"是", no:"否", start:"查看推薦", r_label:"來自哪裡", r_japan:"日本", r_china:"中國/台灣", r_sea:"東南亞", r_west:"歐美", r_other:"其他", region_tip:"以下地區旅客的熱門：", region_pick:"熱門",
     c_acne:"痘痘", c_pigment:"色斑", c_scar:"疤痕", c_aging:"抗老", c_barrier:"修護屏障",
     s_oily:"油性", s_combo:"混合", s_dry:"乾性", s_sensitive:"敏感",
     rec_title:"為你推薦", rec_sub:"針對：", edit:"修改",
@@ -289,13 +304,13 @@ const T={
     otc_disclaimer:"基於核准功效的一般資訊，並非推薦。使用前請諮詢藥師。",
     rx_label:"請把這個出示給藥師", buy_at:"在合作商店查看", disclose:"含聯盟連結（僅限化妝品）。",
     add_compare:"加入比較", added_compare:"比較中",
-    fam_title:"相同成分", fam_sub:"含此成分的其他產品",
+    fam_title:"相同成分", fam_sub:"含此成分的其他產品", rep_label:"代表", fam_more:"同成分",
     alt_title:"化妝品替代", alt_sub:"成分相近的日常護理",
     cmp_title:"比較", cmp_card:"卡片", cmp_table:"表格",
     cmp_ingredient:"成分", cmp_strength:"使用強度", cmp_price:"價格", cmp_online:"線上",
     cmp_tip:"化妝品顯示購買連結；藥品僅顯示資訊。", cmp_empty:"在搜尋或推薦中選擇產品進行比較。",
     find_ph:"尋找附近藥局", ph_title:"附近的藥局", ph_sub:"附近的真實藥局。✓＝知名K-美妝藥局。",
-    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_verified:"K-美妝", ph_relocate:"📍 更新我的位置", ph_tax:"退稅", ph_english:"可英文",
+    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_verified:"K-美妝", ph_relocate:"📍 更新我的位置", ph_all:"全部", ph_beauty:"美妝", ph_empty:"附近未找到藥局。", ph_details:"詳情", ph_me:"我", ph_other:"藥局", ph_tax:"退稅", ph_english:"可英文",
     ph_note:"熱門K-美妝產品（PDRN面霜、馬德卡索、祛痘霜等）大多數藥局都有售。✓為知名美妝藥局。我們不追蹤即時庫存——請把韓文產品名出示給藥師確認或訂購。",
     foot:"本應用僅提供一般資訊，非醫療建議。藥品僅供資訊參考，無法透過本應用購買。請務必諮詢藥師。"
   }
@@ -304,6 +319,18 @@ function t(k){ return (T[state.lang]&&T[state.lang][k]) || T.EN[k] || k; }
 
 const CONCERNS=["acne","pigment","scar","aging","barrier"];
 const SKINS=["oily","combo","dry","sensitive"];
+/* Region preference — which ingredient families to surface first, by visitor
+   origin. Derived from press + SNS trend coverage:
+   JP=pigment/brightening/antioxidant, CN/TW=acne-scar+regeneration,
+   West=PDRN + Rx-strength acne + pimple patches + barrier repair. */
+const REGIONS=["japan","china","sea","west","other"];
+const REGION_PREF={
+  japan:["hydroquinone","ascorbic","niacinamide-cos","niacinamide-otc"],
+  china:["pdrn","egf","centella-cos","centella-wound","scar-gel"],
+  sea:["ibupiconol","salicylic","hydroquinone","hydrocolloid"],
+  west:["pdrn","ibupiconol","salicylic","hydrocolloid","panthenol","scar-gel"],
+  other:[]
+};
 
 /* Expanded lineup grouped by ingredientKey (same ingredient = same key).
    onlineSale:false marks pharmacy-exclusive items (e.g. Dr.Reju-All,
@@ -317,59 +344,81 @@ const PRODUCTS=[
   {id:"kdpdrn",ko:"광동 PDRN 크림",rom:"Kwangdong PDRN Cream",maker:"Kwangdong",cat:"COSMETIC",concerns:["aging","barrier"],ingredientKey:"pdrn",
    ingredient:{EN:"PDRN",JA:"PDRN",ZH:"PDRN"},indication:{EN:"Regenerating cream",JA:"再生クリーム",ZH:"再生面霜"},strength:"daily",price:[22000,32000],pregSafe:true,views:4800,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"}]},
-  {id:"pdrnamp",ko:"PDRN 앰플",rom:"PDRN Ampoule",maker:"—",cat:"COSMETIC",concerns:["aging","barrier"],ingredientKey:"pdrn",
-   ingredient:{EN:"PDRN (cosmetic grade)",JA:"PDRN(化粧品グレード)",ZH:"PDRN(化妆品级)"},indication:{EN:"Glow & firming routine",JA:"ハリ・ツヤケア",ZH:"提亮紧致"},strength:"daily",price:[20000,35000],pregSafe:true,views:7100,
+  {id:"pdrnamp",ko:"메디큐브 PDRN 핑크 앰플",rom:"Medicube PDRN Pink Ampoule",maker:"Medicube (APR)",cat:"COSMETIC",concerns:["aging","barrier"],ingredientKey:"pdrn",rep:true,
+   ingredient:{EN:"Salmon PDRN 99% + peptides",JA:"サーモンPDRN99%＋ペプチド",ZH:"鲑鱼PDRN99%＋胜肽"},indication:{EN:"Home skin-booster ampoule (glow & firming)",JA:"自宅スキンブースター美容液（ツヤ・ハリ）",ZH:"居家水光安瓶（提亮紧致）"},strength:"daily",price:[28000,35000],pregSafe:true,views:13800,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"},{name:"YesStyle",url:"https://www.yesstyle.com"}]},
 
   /* — Centella family — */
-  {id:"madecassol",ko:"마데카솔케어",rom:"Madecassol Care",maker:"Dongkook",cat:"OTC",concerns:["scar","barrier"],ingredientKey:"centella",
+  {id:"madecassol",ko:"마데카솔케어",rom:"Madecassol Care",maker:"Dongkook",cat:"OTC",concerns:["scar","barrier"],ingredientKey:"centella-wound",rep:true,
    ingredient:{EN:"Centella + antibiotic",JA:"ツボクサ+抗菌",ZH:"积雪草+抗菌"},indication:{EN:"Wound & scar healing",JA:"傷・傷あと治癒",ZH:"伤口疤痕愈合"},strength:"treat",price:[5000,9000],pregSafe:true,views:8300},
-  {id:"madecapowder",ko:"마데카솔 분말",rom:"Madecassol Powder",maker:"Dongkook",cat:"OTC",concerns:["scar","barrier"],ingredientKey:"centella",
+  {id:"madecapowder",ko:"마데카솔 분말",rom:"Madecassol Powder",maker:"Dongkook",cat:"OTC",concerns:["scar","barrier"],ingredientKey:"centella-wound",
    ingredient:{EN:"Centella powder",JA:"ツボクサ末",ZH:"积雪草粉"},indication:{EN:"Wound-healing powder",JA:"傷治癒パウダー",ZH:"伤口愈合粉"},strength:"treat",price:[6000,10000],pregSafe:true,views:5200},
-  {id:"madeca24",ko:"센텔리안24 마데카크림",rom:"Centellian24 Madeca Cream",maker:"Dongkook",cat:"COSMETIC",concerns:["barrier","aging"],ingredientKey:"centella",
+  {id:"madeca24",ko:"센텔리안24 마데카크림",rom:"Centellian24 Madeca Cream",maker:"Dongkook",cat:"COSMETIC",concerns:["barrier","aging"],ingredientKey:"centella-cos",rep:true,
    ingredient:{EN:"TECA (centella)",JA:"TECA(ツボクサ)",ZH:"TECA(积雪草)"},indication:{EN:"Daily firming & soothing",JA:"ハリ・鎮静ケア",ZH:"紧致舒缓"},strength:"daily",price:[18000,30000],pregSafe:true,views:7600,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"}]},
-  {id:"madecapharm",ko:"마데카파마시아 크림",rom:"Madeca Pharmacia Cream",maker:"Dongkook",cat:"COSMETIC",concerns:["barrier","aging"],ingredientKey:"centella",onlineSale:false,
+  {id:"madecapharm",ko:"마데카파마시아 크림",rom:"Madeca Pharmacia Cream",maker:"Dongkook",cat:"COSMETIC",concerns:["barrier","aging"],ingredientKey:"centella-cos",onlineSale:false,
    ingredient:{EN:"TECA (high-conc.)",JA:"TECA(高濃度)",ZH:"TECA(高浓度)"},indication:{EN:"Pharmacy-only firming cream",JA:"薬局専用 ハリクリーム",ZH:"药局专售 紧致霜"},strength:"daily",price:[25000,38000],pregSafe:true,views:6000},
-  {id:"cica",ko:"시카 진정크림",rom:"Cica Soothing Cream",maker:"—",cat:"COSMETIC",concerns:["barrier","acne","sensitive"],ingredientKey:"centella",
+  {id:"cica",ko:"시카 진정크림",rom:"Cica Soothing Cream",maker:"—",cat:"COSMETIC",concerns:["barrier","acne","sensitive"],ingredientKey:"centella-cos",
    ingredient:{EN:"Centella asiatica",JA:"ツボクサ(シカ)",ZH:"积雪草"},indication:{EN:"Daily soothing & hydration",JA:"毎日の鎮静・保湿",ZH:"日常舒缓保湿"},strength:"daily",price:[12000,20000],pregSafe:true,views:8800,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"},{name:"Qoo10",url:"https://www.qoo10.com"}]},
 
   /* — Panthenol family — */
-  {id:"bepanthen",ko:"비판텐연고",rom:"Bepanthen Ointment",maker:"Bayer",cat:"OTC",concerns:["barrier"],ingredientKey:"panthenol",
+  {id:"bepanthen",ko:"비판텐연고",rom:"Bepanthen Ointment",maker:"Bayer",cat:"OTC",concerns:["barrier"],ingredientKey:"panthenol",rep:true,
    ingredient:{EN:"Dexpanthenol",JA:"デクスパンテノール",ZH:"右泛醇"},indication:{EN:"Barrier & dryness repair",JA:"バリア・乾燥補修",ZH:"屏障干燥修护"},strength:"treat",price:[7000,12000],pregSafe:true,views:4900},
-  {id:"dpanthenol",ko:"D-판테놀연고",rom:"D-Panthenol Ointment",maker:"—",cat:"OTC",concerns:["barrier"],ingredientKey:"panthenol",
+  {id:"dpanthenol",ko:"D-판테놀연고",rom:"D-Panthenol Ointment",maker:"Dong-A",cat:"OTC",concerns:["barrier"],ingredientKey:"panthenol",
    ingredient:{EN:"Dexpanthenol",JA:"デクスパンテノール",ZH:"右泛醇"},indication:{EN:"Barrier & dryness repair",JA:"バリア・乾燥補修",ZH:"屏障干燥修护"},strength:"treat",price:[5000,9000],pregSafe:true,views:3800},
+  {id:"dexpanol",ko:"덱스파놀연고",rom:"Dexpanol Ointment",maker:"Taeguk",cat:"OTC",concerns:["barrier"],ingredientKey:"panthenol",
+   ingredient:{EN:"Dexpanthenol",JA:"デクスパンテノール",ZH:"右泛醇"},indication:{EN:"Barrier & dryness repair (lighter texture)",JA:"バリア・乾燥補修（軽め）",ZH:"屏障干燥修护（较清爽）"},strength:"treat",price:[5000,9000],pregSafe:true,views:3200},
 
   /* — EGF — */
-  {id:"egf",ko:"이지에프 새살연고",rom:"EGF New-Skin Ointment",maker:"—",cat:"OTC",concerns:["barrier","scar"],ingredientKey:"egf",
-   ingredient:{EN:"EGF (rh-oligopeptide)",JA:"EGF",ZH:"EGF表皮生长因子"},indication:{EN:"Skin regeneration ointment",JA:"新生再生軟膏",ZH:"新肌再生软膏"},strength:"treat",price:[8000,13000],pregSafe:true,views:4500},
+  {id:"egf",ko:"이지에프 새살연고",rom:"Easyef New-Skin Ointment",maker:"Daewoong",cat:"OTC",concerns:["barrier","scar"],ingredientKey:"egf",
+   ingredient:{EN:"rh-EGF (recombinant)",JA:"rh-EGF（遺伝子組換え）",ZH:"重组人EGF"},indication:{EN:"Scar-minimizing regeneration (Korea's only EGF OTC)",JA:"傷あとを抑える再生（韓国唯一のEGF一般薬）",ZH:"减少疤痕的再生（韩国唯一EGF非处方）"},strength:"treat",price:[8000,13000],pregSafe:true,views:4500},
 
-  /* — Acne (ibuprofen piconol) — */
-  {id:"acnon",ko:"애크논크림",rom:"Acnon Cream",maker:"Dong-A",cat:"OTC",concerns:["acne"],ingredientKey:"acne-otc",
-   ingredient:{EN:"Ibuprofen piconol",JA:"イブプロフェンピコノール",ZH:"布洛芬匹可诺"},indication:{EN:"Acne treatment",JA:"ニキビ治療",ZH:"痘痘治疗"},strength:"treat",price:[5000,8000],pregSafe:false,views:9800},
-  {id:"acrin",ko:"애크린겔",rom:"Acrin Gel",maker:"—",cat:"OTC",concerns:["acne"],ingredientKey:"acne-otc",
-   ingredient:{EN:"Ibuprofen piconol",JA:"イブプロフェンピコノール",ZH:"布洛芬匹可诺"},indication:{EN:"Acne treatment gel",JA:"ニキビ治療ジェル",ZH:"痘痘治疗凝胶"},strength:"treat",price:[5000,9000],pregSafe:false,views:4200},
+  /* — Acne · inflammatory (ibuprofen piconol) — */
+  {id:"acnon",ko:"애크논크림",rom:"Acnon Cream",maker:"Dong-A",cat:"OTC",concerns:["acne"],ingredientKey:"ibupiconol",rep:true,
+   ingredient:{EN:"Ibuprofen piconol + isopropylmethylphenol",JA:"イブプロフェンピコノール＋イソプロピルメチルフェノール",ZH:"布洛芬匹可诺＋异丙基甲基酚"},indication:{EN:"Inflammatory acne (red / pus pimples)",JA:"炎症性ニキビ（赤み・膿）",ZH:"炎症性痘痘（红肿/脓）"},strength:"treat",price:[5000,8000],pregSafe:false,views:9800},
+  {id:"senspot",ko:"센스팟크림",rom:"Senspot Cream",maker:"Dongkook",cat:"OTC",concerns:["acne"],ingredientKey:"ibupiconol",
+   ingredient:{EN:"Ibuprofen piconol + isopropylmethylphenol",JA:"イブプロフェンピコノール＋イソプロピルメチルフェノール",ZH:"布洛芬匹可诺＋异丙基甲基酚"},indication:{EN:"Inflammatory acne (red / pus pimples), 20g",JA:"炎症性ニキビ（赤み・膿）・20g",ZH:"炎症性痘痘（红肿/脓）·20g"},strength:"treat",price:[6000,9000],pregSafe:false,views:3000},
+
+  /* — Acne · non-inflammatory (salicylic acid 2%) — */
+  {id:"acrin",ko:"애크린겔",rom:"Acrin Gel",maker:"Dong-A",cat:"OTC",concerns:["acne"],ingredientKey:"salicylic",rep:true,
+   ingredient:{EN:"Salicylic acid 2%",JA:"サリチル酸2%",ZH:"水杨酸2%"},indication:{EN:"Non-inflammatory (comedonal) acne",JA:"非炎症性（コメド）ニキビ",ZH:"非炎症性（粉刺）痘痘"},strength:"treat",price:[5000,9000],pregSafe:false,views:4200},
+  {id:"cleartin",ko:"클리어틴",rom:"Cleartin",maker:"—",cat:"OTC",concerns:["acne"],ingredientKey:"salicylic",
+   ingredient:{EN:"Salicylic acid 2%",JA:"サリチル酸2%",ZH:"水杨酸2%"},indication:{EN:"Non-inflammatory (comedonal) acne",JA:"非炎症性（コメド）ニキビ",ZH:"非炎症性（粉刺）痘痘"},strength:"treat",price:[6000,10000],pregSafe:false,views:3500},
 
   /* — Niacinamide — */
-  {id:"sevitabi",ko:"세비타비겔",rom:"Sevitabi Gel",maker:"—",cat:"OTC",concerns:["acne"],ingredientKey:"niacinamide",
+  {id:"sevitabi",ko:"세비타비겔",rom:"Sevitabi Gel",maker:"—",cat:"OTC",concerns:["acne"],ingredientKey:"niacinamide-otc",
    ingredient:{EN:"Nicotinamide",JA:"ニコチン酸アミド",ZH:"烟酰胺"},indication:{EN:"Acne-prone daily care",JA:"ニキビ肌デイリーケア",ZH:"痘痘肌日常护理"},strength:"daily",price:[7000,11000],pregSafe:true,views:3900},
-  {id:"niacin",ko:"나이아신아마이드 세럼",rom:"Niacinamide Serum",maker:"—",cat:"COSMETIC",concerns:["pigment"],ingredientKey:"niacinamide",
+  {id:"niacin",ko:"나이아신아마이드 세럼",rom:"Niacinamide Serum",maker:"—",cat:"COSMETIC",concerns:["pigment"],ingredientKey:"niacinamide-cos",
    ingredient:{EN:"Niacinamide",JA:"ナイアシンアミド",ZH:"烟酰胺"},indication:{EN:"Tone-up daily serum",JA:"トーンアップ美容液",ZH:"提亮精华"},strength:"daily",price:[13000,22000],pregSafe:true,views:5900,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"}]},
 
   /* — Brightening singles — */
-  {id:"melatoning",ko:"멜라토닝크림",rom:"Melatoning Cream",maker:"Dong-A",cat:"OTC",concerns:["pigment"],ingredientKey:"hydroquinone",
-   ingredient:{EN:"Hydroquinone",JA:"ハイドロキノン",ZH:"氢醌"},indication:{EN:"Dark-spot care",JA:"シミケア",ZH:"色斑护理"},strength:"treat",price:[9000,14000],pregSafe:false,views:6100},
-  {id:"azelia",ko:"아젤리아크림",rom:"Azelia Cream",maker:"—",cat:"OTC",concerns:["acne","pigment"],ingredientKey:"azelaic",
-   ingredient:{EN:"Azelaic acid",JA:"アゼライン酸",ZH:"壬二酸"},indication:{EN:"Acne & pigment care",JA:"ニキビ・色素ケア",ZH:"痘痘色素护理"},strength:"treat",price:[9000,15000],pregSafe:true,views:4000},
+  {id:"melatoning",ko:"멜라토닝크림",rom:"Melatoning Cream",maker:"Dong-A",cat:"OTC",concerns:["pigment"],ingredientKey:"hydroquinone",rep:true,
+   ingredient:{EN:"Hydroquinone 2%",JA:"ハイドロキノン2%",ZH:"氢醌2%"},indication:{EN:"Dark-spot care (mild, 2%)",JA:"シミケア（マイルド2%）",ZH:"色斑护理（温和2%）"},strength:"treat",price:[9000,14000],pregSafe:false,views:6100},
+  {id:"melanosa",ko:"멜라노사크림",rom:"Melanosa Cream",maker:"Dong-A",cat:"OTC",concerns:["pigment"],ingredientKey:"hydroquinone",
+   ingredient:{EN:"Hydroquinone 4%",JA:"ハイドロキノン4%",ZH:"氢醌4%"},indication:{EN:"Dark-spot care (stronger, 4%)",JA:"シミケア（強め4%）",ZH:"色斑护理（较强4%）"},strength:"treat",price:[10000,16000],pregSafe:false,views:3600},
+  {id:"domina",ko:"도미나크림",rom:"Domina Cream",maker:"Taeguk",cat:"OTC",concerns:["pigment"],ingredientKey:"hydroquinone",
+   ingredient:{EN:"Hydroquinone 4%",JA:"ハイドロキノン4%",ZH:"氢醌4%"},indication:{EN:"Dark-spot care (4%, best-seller)",JA:"シミケア（4%・定番）",ZH:"色斑护理（4%・畅销）"},strength:"treat",price:[10000,16000],pregSafe:false,views:7200},
+  {id:"azelia",ko:"아젤리아크림",rom:"Azelia Cream",maker:"LEO Pharma",cat:"OTC",concerns:["acne","pigment"],ingredientKey:"azelaic",
+   ingredient:{EN:"Azelaic acid 20%",JA:"アゼライン酸20%",ZH:"壬二酸20%"},indication:{EN:"Inflammatory acne, redness & post-acne marks",JA:"炎症性ニキビ・赤み・ニキビ跡",ZH:"炎症性痘痘・泛红・痘印"},strength:"treat",price:[20000,25000],pregSafe:false,views:6800},
   {id:"vitc",ko:"비타민C 세럼",rom:"Vitamin C Serum",maker:"—",cat:"COSMETIC",concerns:["pigment","aging"],ingredientKey:"ascorbic",
    ingredient:{EN:"Ascorbic acid",JA:"アスコルビン酸",ZH:"抗坏血酸"},indication:{EN:"Brightening daily serum",JA:"トーンアップ美容液",ZH:"提亮精华"},strength:"daily",price:[15000,28000],pregSafe:true,views:5400,
    affiliates:[{name:"Olive Young Global",url:"https://global.oliveyoung.com"}]},
 
-  /* — Quasi-drug — */
-  {id:"spotpatch",ko:"여드름 스팟패치",rom:"Acne Spot Patch",maker:"—",cat:"QUASI",concerns:["acne"],ingredientKey:"hydrocolloid",
-   ingredient:{EN:"Hydrocolloid",JA:"ハイドロコロイド",ZH:"水胶体"},indication:{EN:"Blemish protection",JA:"トラブル保護",ZH:"痘痘保护"},strength:"daily",price:[3000,6000],pregSafe:true,views:6500}
+  /* — Scar gels (heparin + allantoin) — */
+  {id:"noscarna",ko:"노스카나겔",rom:"Noscarna Gel",maker:"Dong-A",cat:"OTC",concerns:["scar"],ingredientKey:"scar-gel",rep:true,
+   ingredient:{EN:"Heparin sodium + allantoin + dexpanthenol",JA:"ヘパリンNa＋アラントイン＋デクスパンテノール",ZH:"肝素钠＋尿囊素＋右泛醇"},indication:{EN:"Acne / surgical / keloid scar care",JA:"ニキビ・手術・ケロイド傷あとケア",ZH:"痘疤・手术・疤痕护理"},strength:"treat",price:[9000,16000],pregSafe:false,views:8900},
+  {id:"contractubex",ko:"콘투락투벡스",rom:"Contractubex",maker:"Merz",cat:"OTC",concerns:["scar"],ingredientKey:"scar-gel",
+   ingredient:{EN:"Heparin + allantoin + onion extract",JA:"ヘパリン＋アラントイン＋タマネギ抽出物",ZH:"肝素＋尿囊素＋洋葱提取物"},indication:{EN:"Hypertrophic / surgical scar care",JA:"肥厚性・手術傷あとケア",ZH:"增生性・手术疤痕护理"},strength:"treat",price:[12000,22000],pregSafe:false,views:5200},
+
+  /* — Quasi-drug · hydrocolloid spot patches — */
+  {id:"spotpatch",ko:"이지덤 뷰티 스팟패치",rom:"Easydew Beauty Spot Patch",maker:"Daewoong",cat:"QUASI",concerns:["acne"],ingredientKey:"hydrocolloid",rep:true,
+   ingredient:{EN:"Hydrocolloid",JA:"ハイドロコロイド",ZH:"水胶体"},indication:{EN:"Absorbs fluid & protects popped pimples",JA:"浸出液を吸収しニキビを保護",ZH:"吸收渗液并保护痘痘"},strength:"daily",price:[4000,8000],pregSafe:true,views:6500},
+  {id:"duoderm",ko:"듀오덤 스팟패치",rom:"DuoDERM Spot Patch",maker:"ConvaTec",cat:"QUASI",concerns:["acne"],ingredientKey:"hydrocolloid",
+   ingredient:{EN:"Hydrocolloid",JA:"ハイドロコロイド",ZH:"水胶体"},indication:{EN:"Strong adhesion, high absorption",JA:"強い密着・高吸収",ZH:"强黏附・高吸收"},strength:"daily",price:[8000,14000],pregSafe:true,views:4800},
+  {id:"medifoam",ko:"메디폼H 뷰티",rom:"Medifoam H Beauty",maker:"Mundipharma",cat:"QUASI",concerns:["acne"],ingredientKey:"hydrocolloid",
+   ingredient:{EN:"Hydrocolloid",JA:"ハイドロコロイド",ZH:"水胶体"},indication:{EN:"Thin daily trouble patch",JA:"薄手のデイリートラブルパッチ",ZH:"轻薄日常痘痘贴"},strength:"daily",price:[6000,10000],pregSafe:true,views:3600}
 ];
 
 /* Curated REAL beauty-focused pharmacies (Korean names from press coverage).
@@ -378,18 +427,32 @@ const PRODUCTS=[
    When KAKAO_JS_KEY is set, the app auto-loads ALL real nearby pharmacies
    (Korean names + exact coords) via Kakao category search instead. */
 const FALLBACK_PH=[
-  {nmKo:"오아시스약국 명동",nmEn:"Oasis Pharmacy (Myeongdong)",lat:37.5634,lng:126.9839,area:"Myeongdong, Seoul",lines:"Dr.Reju-All · PDRN · Acne",verified:true},
-  {nmKo:"레디영약국 명동",nmEn:"Ready Young Pharmacy (Myeongdong)",lat:37.5609,lng:126.9853,area:"Myeongdong, Seoul",lines:"PDRN · Centella · Brightening",verified:true},
-  {nmKo:"레디영약국 홍대",nmEn:"Ready Young Pharmacy (Hongdae)",lat:37.5556,lng:126.9237,area:"Hongdae, Seoul",lines:"Dr.Reju-All · Cica · Brightening",verified:true},
-  {nmKo:"레디영약국 성수",nmEn:"Ready Young Pharmacy (Seongsu)",lat:37.5446,lng:127.0560,area:"Seongsu, Seoul",lines:"PDRN · Centella",verified:true},
-  {nmKo:"옵티마웰니스뮤지엄약국",nmEn:"Optima Wellness Museum Pharmacy",lat:37.4979,lng:127.0276,area:"Gangnam, Seoul",lines:"PDRN · Anti-aging",verified:true}
+  /* Myeongdong — highest foreign footfall */
+  {nmKo:"명동레디영약국",nmEn:"Myeongdong Ready Young Pharmacy",lat:37.5613319,lng:126.984559,area:"Myeongdong, Seoul",lines:"PDRN · Madeca · Brightening",verified:true,phone:"+82 2-318-5973",place_url:"https://maps.google.com/?cid=3321886566059938804"},
+  {nmKo:"명동타운레디영약국",nmEn:"Ready Young Town Pharmacy",lat:37.5618039,lng:126.9868429,area:"Myeongdong, Seoul",lines:"PDRN · Centella",verified:true,phone:"+82 70-7773-9325",place_url:"https://maps.google.com/?cid=366713029668970706"},
+  {nmKo:"명동더서울약국",nmEn:"The Seoul Drugstore",lat:37.5637973,lng:126.983819,area:"Myeongdong, Seoul",lines:"Skincare · Face care",verified:true,place_url:"https://maps.google.com/?cid=11188016159178862357"},
+  {nmKo:"명동뷰티랩약국",nmEn:"Beautylab Drugstore",lat:37.5622006,lng:126.9857311,area:"Myeongdong, Seoul",lines:"Skin scan · 1:1 consult",verified:true,phone:"+82 50-71309-3347",place_url:"https://maps.google.com/?cid=8998491851848500504"},
+  {nmKo:"명동K약국",nmEn:"Myeongdong K Pharmacy",lat:37.5614927,lng:126.9844658,area:"Myeongdong, Seoul",lines:"K-beauty · Trending",verified:true,place_url:"https://maps.google.com/?cid=8735633649817655077"},
+  {nmKo:"명동뷰티유약국",nmEn:"BEAUTYU Pharmacy",lat:37.5634756,lng:126.9834264,area:"Myeongdong, Seoul",lines:"Tax-free · Beauty",verified:true,phone:"+82 70-8823-0888",place_url:"https://maps.google.com/?cid=17113144067100534857"},
+  {nmKo:"웰니스약국",nmEn:"Wellness Pharmacy (Myeongdong)",lat:37.5615874,lng:126.9860253,area:"Myeongdong, Seoul",lines:"Skincare · Instant tax refund",verified:true,phone:"+82 2-3789-5088",place_url:"https://maps.google.com/?cid=3206137617583508205"},
+  /* Gangnam */
+  {nmKo:"옵티마웰니스뮤지엄약국",nmEn:"Optima Wellness Museum Pharmacy",lat:37.5035725,lng:127.0284248,area:"Gangnam, Seoul",lines:"PDRN · Anti-aging · Wellness",verified:true,phone:"+82 2-2038-8611",place_url:"https://maps.google.com/?cid=1705240603468964444"},
+  {nmKo:"코코온누리약국",nmEn:"Cocoonnuri Pharmacy",lat:37.498861,lng:127.0276104,area:"Gangnam, Seoul",lines:"Skincare · EN labels",verified:true,phone:"+82 2-539-1500",place_url:"https://maps.google.com/?cid=3515730321588053803"},
+  /* Seongsu — emerging hotspot */
+  {nmKo:"퓨어약국",nmEn:"PVRE (PURE) Pharmacy (Seongsu)",lat:37.5438067,lng:127.0570939,area:"Seongsu, Seoul",lines:"Beauty boutique · Curated",verified:true,phone:"+82 10-2190-9363",place_url:"https://maps.google.com/?cid=13029046622993780828"},
+  {nmKo:"그린애플약국",nmEn:"Green Apple Pharmacy (Seongsu)",lat:37.5438993,lng:127.0538984,area:"Seongsu, Seoul",lines:"Viral skincare · Dr.Reju-All",verified:true,phone:"+82 2-6956-3509",place_url:"https://maps.google.com/?cid=17003080855549452648"},
+  {nmKo:"도레미약국샵",nmEn:"Doremi Pharmacy Sharp (Seongsu)",lat:37.5422217,lng:127.0571241,area:"Seongsu, Seoul",lines:"K-beauty curation",verified:true,place_url:"https://maps.google.com/?cid=7395741239465986360"}
 ];
-/* Name tokens used to badge a live Kakao result as a known beauty pharmacy. */
-const BEAUTY_NAMES=["오아시스약국","레디영약국","옵티마웰니스뮤지엄","베리뉴약국","퓨어약국"];
+/* Beauty-pharmacy detection. BEAUTY_NAMES = curated whitelist (precision):
+   real beauty pharmacies whose Korean name carries NO obvious signal.
+   BEAUTY_TOKENS = generic heuristic (recall): a Korean pharmacy name that
+   contains these is almost always positioning itself as a beauty/derma shop. */
+const BEAUTY_NAMES=["레디영","더서울약국","명동K약국","코코온누리","퓨어약국","그린애플약국","도레미약국샵","오아시스약국","베리뉴약국"];
+const BEAUTY_TOKENS=["뷰티","웰니스","드럭스토어","beauty","wellness","drugstore"];
 
 const state={ lang:"EN", tab:"foryou", screen:"foryou", profileSet:false,
-  profile:{concern:"acne",skin:"combo",preg:false}, search:"", sort:"popular",
-  detailId:null, compare:[], cmpView:"card", history:[], _focusSearch:false, _coords:null };
+  profile:{concern:"acne",skin:"combo",preg:false,region:"other"}, search:"", sort:"popular",
+  detailId:null, compare:[], cmpView:"card", history:[], _focusSearch:false, _coords:null, phFilter:"all", _livePh:null };
 const MAX_CMP=3;
 
 const $=s=>document.querySelector(s);
@@ -413,12 +476,30 @@ function back(){ const p=state.history.pop(); if(p){ state.screen=p; render(); w
 
 function productCard(p,opts={}){
   const rank=opts.rank!=null?`<div class="rank">${opts.rank}</div>`:"";
-  const matchLine=(p.cat==="COSMETIC"&&opts.match)?`<div class="pmeta match">★ ${opts.match}</div>`:"";
+  const matchLine=(p.cat==="COSMETIC"&&opts.match)?`<div class="pmeta match">✦ ${opts.match}%</div>`:"";
+  const r=ratingOf(p); const ratLine=r?`<div class="pmeta">${starHtml(r)}</div>`:"";
+  const repBadge=opts.famCount>1?`<span class="repbadge">${t("rep_label")}</span>`:"";
+  const rgnChip=opts.regionPick?`<span class="rgnchip">🌏 ${t("region_pick")}</span>`:"";
+  const famNote=opts.famCount>1?`<div class="pmeta famnote">+${opts.famCount-1} ${t("fam_more")}</div>`:"";
+  const memberCls=opts.famMember?" member":"";
   const meta=opts.viewMeta?`${loc(p.indication)} · ${p.views.toLocaleString()} ${t("views")}`:`${loc(p.indication)} · ${price(p.price)}`;
   const sel=opts.selectable?`<button class="selbox" aria-pressed="${state.compare.includes(p.id)}" aria-label="${t("add_compare")}" onclick="event.stopPropagation();toggleCompare('${p.id}')">${state.compare.includes(p.id)?"✓":"+"}</button>`:"";
-  return `<div class="card"><div class="card-row" onclick="openDetail('${p.id}')">${rank}
-    <div class="card-body"><div class="pname">${p.ko} <span class="prom">${p.rom}</span></div>
-    <div class="pmeta">${meta}</div>${matchLine}</div>${badge(p.cat)}${sel}</div></div>`;
+  return `<div class="card${memberCls}"><div class="card-row" onclick="openDetail('${p.id}')">${rank}
+    <div class="card-body"><div class="pname">${p.ko} <span class="prom">${p.rom}</span>${repBadge}${rgnChip}</div>
+    <div class="pmeta">${meta}</div>${ratLine}${matchLine}${famNote}</div>${badge(p.cat)}${sel}</div></div>`;
+}
+/* Group a (filtered, sorted) list by ingredientKey; the rep-flagged item leads
+   each group, same-ingredient siblings are nested beneath it. */
+function groupFam(list){
+  const order=[],map={};
+  list.forEach(p=>{ const k=p.ingredientKey; if(!map[k]){map[k]=[];order.push(k);} map[k].push(p); });
+  return order.map(k=>{ const g=map[k]; const rep=g.find(x=>x.rep)||g[0]; return {rep,rest:g.filter(x=>x!==rep),count:g.length}; });
+}
+function famGroupHtml(grp,baseOpts){
+  const rep=productCard(grp.rep,{...baseOpts,match:grp.rep._match||null,regionPick:grp.rep._rgn,famCount:grp.count});
+  if(grp.count===1) return rep;
+  const rest=grp.rest.map(p=>productCard(p,{...baseOpts,match:p._match||null,regionPick:p._rgn,famMember:true})).join("");
+  return `<div class="famgroup">${rep}<div class="fammembers">${rest}</div></div>`;
 }
 function familyBlock(p){
   const fam=familyOf(p); if(!fam.length) return "";
@@ -436,6 +517,7 @@ function screenForYou(){
     const p=state.profile;
     return `<h1>${t("ob_title")}</h1><p class="lede">${t("ob_sub")}</p>
       <p class="eyebrow">${t("ob_concern")}</p>${chipRow(CONCERNS,"c_",p.concern,"pickConcern")}
+      <p class="eyebrow">${t("r_label")}</p>${chipRow(REGIONS,"r_",p.region,"pickRegion")}
       <p class="eyebrow">${t("ob_skin")}</p>${chipRow(SKINS,"s_",p.skin,"pickSkin")}
       <p class="eyebrow">${t("ob_preg")}</p>
       <div class="chips"><button class="chip" aria-pressed="${p.preg===true}" onclick="pickPreg(true)">${t("yes")}</button>
@@ -443,13 +525,15 @@ function screenForYou(){
       <button class="btn" onclick="finishOnboarding()">${t("start")}</button>`;
   }
   const c=state.profile.concern;
+  const reg=state.profile.region||"other";
+  const pref=REGION_PREF[reg]||[];
   let list=PRODUCTS.filter(p=>p.concerns.includes(c));
   if(state.profile.preg) list=list.filter(p=>p.pregSafe);
-  list.forEach(p=>p._match=(p.cat==="COSMETIC")?(80+Math.round((p.views/200)%18)):0);
-  list.sort((a,b)=>b._match-a._match||b.views-a.views);
-  const cards=list.map(p=>productCard(p,{match:p._match||null,selectable:true})).join("")||`<p class="empty">—</p>`;
+  list.forEach(p=>{ p._match=(p.cat==="COSMETIC")?(80+Math.round((p.views/200)%18)):0; p._rgn=pref.includes(p.ingredientKey); });
+  list.sort((a,b)=>(b._rgn-a._rgn)||(b._match-a._match)||(b.views-a.views));
+  const cards=list.length?groupFam(list).map(g=>famGroupHtml(g,{selectable:true})).join(""):`<p class="empty">—</p>`;
   return `<div class="head-row"><h1>${t("rec_title")}</h1><button class="linkbtn" onclick="editProfile()">${t("edit")}</button></div>
-    <p class="lede">${t("rec_sub")} ${t("c_"+c)} · ${t("s_"+state.profile.skin)}</p>${cards}${footer()}`;
+    <p class="lede">${t("rec_sub")} ${t("c_"+c)} · ${t("s_"+state.profile.skin)}${reg!=="other"?` · 🌏 ${t("region_tip")} ${t("r_"+reg)}`:""}</p>${cards}${footer()}`;
 }
 
 function screenSearch(){
@@ -460,7 +544,10 @@ function screenSearch(){
   else if(state.sort==="price") list.sort((a,b)=>a.price[0]-b.price[0]);
   else if(state.sort==="name") list.sort((a,b)=>a.rom.localeCompare(b.rom));
   const showRank=state.sort==="popular";
-  const cards=list.length?list.map((p,i)=>productCard(p,{rank:showRank?i+1:null,viewMeta:true,selectable:true})).join(""):`<p class="empty">—</p>`;
+  const cards=list.length
+    ?(q?list.map((p,i)=>productCard(p,{rank:showRank?i+1:null,viewMeta:true,selectable:true})).join("")
+       :groupFam(list).map(g=>famGroupHtml(g,{viewMeta:true,selectable:true})).join(""))
+    :`<p class="empty">—</p>`;
   return `<h1>${t("tab_search")}</h1>
     <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
     <input id="searchBox" type="search" placeholder="${t("search_ph")}" value="${state.search}" oninput="onSearch(this.value)" aria-label="${t("search_ph")}"/></div>
@@ -473,6 +560,12 @@ function screenSearch(){
     ${cards}${footer()}`;
 }
 
+/* DEMO seed ratings (cosmetics only). Replace with real user ratings via a
+   backend before public launch — showing fabricated ratings publicly is
+   misleading and a 표시광고법 risk. Medicines intentionally have no rating. */
+const SEED_RATINGS={drrejuall:[4.8,312],kdpdrn:[4.5,142],pdrnamp:[4.6,208],madeca24:[4.7,401],madecapharm:[4.6,96],cica:[4.5,530],niacin:[4.4,187],vitc:[4.3,233]};
+function ratingOf(p){ return p.cat==="COSMETIC"?SEED_RATINGS[p.id]:null; }
+function starHtml(r){ if(!r) return ""; const full=Math.round(r[0]); return `<span class="stars">${"★".repeat(full)}${"☆".repeat(5-full)}</span> <span class="ratenum">${r[0].toFixed(1)} (${r[1]})</span>`; }
 function screenDetail(){
   const p=findP(state.detailId); if(!p) return `<p class="empty">—</p>`;
   const inCmp=state.compare.includes(p.id);
@@ -482,7 +575,8 @@ function screenDetail(){
   const fam=familyOf(p);
   const related=fam.length?familyBlock(p):(isMed(p)?altBlock(p):"");
   return `<div class="detail-head"><h1>${p.ko}</h1>${badge(p.cat)}</div>
-    <p class="lede">${p.rom}${p.maker&&p.maker!=="—"?" · "+p.maker:""}</p>${medNote}
+    <p class="lede">${p.rom}${p.maker&&p.maker!=="—"?" · "+p.maker:""}</p>
+    ${ratingOf(p)?`<div class="raterow">${starHtml(ratingOf(p))}</div>`:""}${medNote}
     <table class="kv">
       <tr><td>${t("d_class")}</td><td>${t("cat_"+p.cat)}</td></tr>
       <tr><td>${t("d_indication")}</td><td>${loc(p.indication)}</td></tr>
@@ -491,7 +585,7 @@ function screenDetail(){
       <tr><td>${t("d_price")}</td><td>${price(p.price)}</td></tr>
       <tr><td>${t("d_purchase")}</td><td>${onlineCell}</td></tr>
     </table>${buyBlock}
-    <div class="rx"><div class="lbl"><span class="cross" style="width:13px;height:13px" aria-hidden="true"></span>${t("rx_label")}</div><div class="ko">${p.ko}</div></div>
+    <div class="rx"><div class="lbl"><svg width="12" height="12" viewBox="0 0 18 18" aria-hidden="true" style="flex-shrink:0"><rect x="6" y="0" width="6" height="18" rx="1.5" fill="currentColor"/><rect x="0" y="6" width="18" height="6" rx="1.5" fill="currentColor"/></svg>${t("rx_label")}</div><div class="ko">${p.ko}</div></div>
     <button class="addcmp" aria-pressed="${inCmp}" onclick="toggleCompare('${p.id}')">${inCmp?"✓ "+t("added_compare"):"+ "+t("add_compare")}</button>
     ${related}
     ${isMed(p)?`<button class="btn ghost" style="margin-top:16px" onclick="selectTab('pharmacy')">${t("find_ph")}</button>`:""}
@@ -528,7 +622,12 @@ function screenCompare(){
 
 function screenPharmacy(){
   return `<h1>${t("ph_title")}</h1><p class="lede">${t("ph_sub")}</p>
+    <div class="toggle phfilter" role="group">
+      <button data-f="all" aria-pressed="${state.phFilter!=='beauty'}" onclick="setPhFilter('all')">${t("ph_all")}</button>
+      <button data-f="beauty" aria-pressed="${state.phFilter==='beauty'}" onclick="setPhFilter('beauty')">✓ ${t("ph_beauty")}</button>
+    </div>
     <div class="map" id="kkmap">${t("ph_loading")}</div>
+    <div class="legend"><span><i style="background:#E11D48"></i>${t("ph_me")}</span><span><i style="background:#1F7A5A"></i>${t("ph_beauty")}</span><span><i style="background:#6B7280"></i>${t("ph_other")}</span></div>
     <button class="btn ghost locbtn" id="relocateBtn" onclick="relocatePharmacy()">${t("ph_relocate")}</button>
     <div id="phlist"></div>
     <div class="note info">${t("ph_note")}</div>${footer()}`;
@@ -548,16 +647,18 @@ const googleDir=p=>`https://www.google.com/maps/dir/?api=1&destination=${p.lat},
 const kakaoDir=p=>`https://map.kakao.com/link/to/${encodeURIComponent(p.nmKo)},${p.lat},${p.lng}`;
 function renderPhList(list){
   const el=$("#phlist"); if(!el) return;
-  if(!list.length){ el.innerHTML=`<p class="empty">—</p>`; return; }
-  el.innerHTML=list.map(p=>`<div class="ph"><div class="top">
+  if(!list.length){ el.innerHTML=`<p class="empty">${t("ph_empty")}</p>`; return; }
+  el.innerHTML=list.map((p,i)=>`<div class="ph" onclick="focusPharmacy(${i})"><div class="top">
       <span class="nm">${p.nmKo}${p.nmEn?` <span class="prom">${p.nmEn}</span>`:""}</span>
       ${p.verified?`<span class="tag">✓ ${t("ph_verified")}</span>`:""}</div>
     <div class="sub"><span>◉ ${fmtDist(p._d)}</span>${p.area?`<span>${p.area}</span>`:""}</div>
     ${p.lines?`<div class="lines">${p.lines}</div>`:""}
-    <div class="dir"><span class="dirlbl">${t("dir_label")}</span>
+    ${p.phone?`<div class="phmeta">☎ <a href="tel:${p.phone}" onclick="event.stopPropagation()">${p.phone}</a></div>`:""}
+    <div class="dir" onclick="event.stopPropagation()"><span class="dirlbl">${t("dir_label")}</span>
       <a href="${naverDir(p)}" target="_blank" rel="noopener nofollow">Naver</a>
       <a href="${googleDir(p)}" target="_blank" rel="noopener nofollow">Google</a>
-      <a href="${kakaoDir(p)}" target="_blank" rel="noopener nofollow">Kakao</a></div>
+      <a href="${kakaoDir(p)}" target="_blank" rel="noopener nofollow">Kakao</a>
+      ${p.place_url?`<a href="${p.place_url}" target="_blank" rel="noopener nofollow">${t("ph_details")} ↗</a>`:""}</div>
   </div>`).join("");
 }
 let naverPromise=null;
@@ -575,26 +676,49 @@ function ensureNaver(){
   });
   return naverPromise;
 }
+let phMapObj=null, phMarkers=[], phInfoWin=null, phCurrentList=[];
+function phInfoHtml(p){
+  const dirA=(href,label)=>`<a href="${href}" target="_blank" rel="noopener nofollow" style="font-size:12px;text-decoration:none;color:#155C43;background:#EAF4EF;border:1px solid #CFE3D9;border-radius:999px;padding:4px 10px;">${label}</a>`;
+  return `<div style="padding:10px 12px;max-width:240px;background:#fff;border:1px solid #D8DAD2;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.14);font-family:sans-serif;">
+    <div style="font-weight:600;font-size:13px;color:#1A1F1C;">${p.verified?"✓ ":""}${p.nmKo}</div>
+    <div style="color:#5C635E;font-size:12px;margin-top:2px;">◉ ${fmtDist(p._d)}${p.area?" · "+p.area:""}</div>
+    ${p.lines?`<div style="color:#155C43;font-size:11px;margin-top:4px;">${p.lines}</div>`:""}
+    ${p.phone?`<div style="color:#5C635E;font-size:12px;margin-top:4px;">☎ <a href="tel:${p.phone}" style="color:#1F7A5A;text-decoration:none;">${p.phone}</a></div>`:""}
+    <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">${dirA(naverDir(p),"Naver")}${dirA(googleDir(p),"Google")}${dirA(kakaoDir(p),"Kakao")}${p.place_url?dirA(p.place_url,t("ph_details")+" ↗"):""}</div>
+  </div>`;
+}
+function openPhInfo(i){
+  const p=phCurrentList[i], mk=phMarkers[i];
+  if(!p||!mk||!phInfoWin||!phMapObj) return;
+  phInfoWin.setContent(phInfoHtml(p));
+  phInfoWin.open(phMapObj,mk);
+}
+function focusPharmacy(i){
+  const p=phCurrentList[i]; if(!p) return;
+  if(phMapObj&&phMarkers[i]){
+    phMapObj.setCenter(new naver.maps.LatLng(p.lat,p.lng));
+    if(phMapObj.getZoom()<15) phMapObj.setZoom(15);
+    openPhInfo(i);
+  }
+  const el=$("#kkmap"); if(el) el.scrollIntoView({behavior:"smooth",block:"center"});
+}
 function drawMap(lat,lng,list){
   const el=$("#kkmap"); if(!el) return;
   el.textContent=""; el.style.display="block";
   const map=new naver.maps.Map(el,{center:new naver.maps.LatLng(lat,lng),zoom:14});
+  phMapObj=map; phMarkers=[];
   // my location — RED dot
   new naver.maps.Marker({position:new naver.maps.LatLng(lat,lng),map,zIndex:1000,
     icon:{content:'<div style="width:16px;height:16px;background:#E11D48;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #E11D48;"></div>',anchor:new naver.maps.Point(8,8)}});
-  const iw=new naver.maps.InfoWindow({borderWidth:0,backgroundColor:"transparent",disableAnchor:true,pixelOffset:new naver.maps.Point(0,-6)});
-  list.forEach(p=>{
-    const mk=new naver.maps.Marker({position:new naver.maps.LatLng(p.lat,p.lng),map,title:p.nmKo});
-    naver.maps.Event.addListener(mk,"click",()=>{
-      iw.setContent(`<div style="padding:9px 12px;max-width:230px;background:#fff;border:1px solid #D8DAD2;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.14);font-family:sans-serif;">
-        <div style="font-weight:600;font-size:13px;color:#1A1F1C;">${p.verified?"✓ ":""}${p.nmKo}</div>
-        <div style="color:#5C635E;font-size:12px;margin-top:2px;">◉ ${fmtDist(p._d)}${p.area?" · "+p.area:""}</div>
-        ${p.lines?`<div style="color:#155C43;font-size:11px;margin-top:4px;">${p.lines}</div>`:""}
-      </div>`);
-      iw.open(map,mk);
-    });
+  phInfoWin=new naver.maps.InfoWindow({borderWidth:0,backgroundColor:"transparent",disableAnchor:true,pixelOffset:new naver.maps.Point(0,-6)});
+  list.forEach((p,i)=>{
+    const col=p.verified?"#1F7A5A":"#6B7280"; // beauty = green, other = gray
+    const mk=new naver.maps.Marker({position:new naver.maps.LatLng(p.lat,p.lng),map,title:p.nmKo,zIndex:p.verified?500:100,
+      icon:{content:`<div style="width:14px;height:14px;background:${col};border:2.5px solid #fff;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.35);"></div>`,anchor:new naver.maps.Point(7,7)}});
+    phMarkers[i]=mk;
+    naver.maps.Event.addListener(mk,"click",()=>openPhInfo(i));
   });
-  naver.maps.Event.addListener(map,"click",()=>iw.close());
+  naver.maps.Event.addListener(map,"click",()=>phInfoWin&&phInfoWin.close());
 }
 /* Live pharmacy data via Kakao category search (PM9 = pharmacy). Headless:
    loads only the 'services' library, no Kakao map shown. */
@@ -612,7 +736,11 @@ function ensureKakaoServices(){
   });
   return kakaoPromise;
 }
-const isBeautyName=n=>BEAUTY_NAMES.some(k=>n&&n.indexOf(k)>=0);
+const isBeautyName=n=>{
+  if(!n) return false;
+  const s=n.toLowerCase();
+  return BEAUTY_NAMES.some(k=>n.indexOf(k)>=0) || BEAUTY_TOKENS.some(t=>s.indexOf(t)>=0);
+};
 function searchPharmacies(lat,lng){
   return new Promise((res,rej)=>{
     ensureKakaoServices().then(()=>{
@@ -622,27 +750,44 @@ function searchPharmacies(lat,lng){
           nmKo:d.place_name, nmEn:"", lat:+d.y, lng:+d.x,
           area:d.road_address_name||d.address_name||"",
           _d:d.distance?(+d.distance)/1000:distKm(lat,lng,+d.y,+d.x),
-          verified:isBeautyName(d.place_name), place_url:d.place_url
+          verified:isBeautyName(d.place_name), place_url:d.place_url, phone:d.phone||""
         })).sort((a,b)=>(b.verified-a.verified)||(a._d-b._d));
         res(list);
       },{location:new kakao.maps.LatLng(lat,lng),radius:20000,sort:kakao.maps.services.SortBy.DISTANCE,size:15});
     }).catch(rej);
   });
 }
+function paintPharmacy(){
+  const c=state._coords; if(!c) return;
+  const curated=()=>FALLBACK_PH.map(p=>({...p,_d:distKm(c.lat,c.lng,p.lat,p.lng)}));
+  let list;
+  if(state.phFilter==="beauty"){
+    const seen=new Set(); list=[];
+    [...(state._livePh||[]).filter(p=>p.verified),...curated()].forEach(p=>{
+      const k=p.nmKo.replace(/\s/g,""); if(!seen.has(k)){ seen.add(k); list.push(p); }
+    });
+    list.sort((a,b)=>a._d-b._d);
+  } else {
+    list=(state._livePh&&state._livePh.length)?state._livePh:curated().sort((a,b)=>a._d-b._d);
+  }
+  phCurrentList=list;
+  renderPhList(list);
+  ensureNaver().then(()=>drawMap(c.lat,c.lng,list)).catch(err=>{
+    if(err==="no-key") console.warn("[K-Pharmacy] Set NAVER_MAP_KEY + register your domain to show the map.");
+    const m=$("#kkmap"); if(m) m.style.display="none";
+  });
+}
+function setPhFilter(f){
+  state.phFilter=f;
+  document.querySelectorAll(".phfilter button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.f===f)));
+  paintPharmacy();
+}
 function initPharmacy(){
-  const fallback=(lat,lng)=>FALLBACK_PH.map(p=>({...p,_d:distKm(lat,lng,p.lat,p.lng)})).sort((a,b)=>a._d-b._d);
   const run=(lat,lng)=>{
     state._coords={lat,lng};
-    const paint=list=>{
-      renderPhList(list);
-      ensureNaver().then(()=>drawMap(lat,lng,list)).catch(err=>{
-        if(err==="no-key") console.warn("[K-Pharmacy] Set NAVER_MAP_KEY + register your domain to show the map.");
-        const m=$("#kkmap"); if(m) m.style.display="none";
-      });
-    };
     if(KAKAO_JS_KEY&&KAKAO_JS_KEY!=="REPLACE_WITH_YOUR_KAKAO_JS_KEY")
-      searchPharmacies(lat,lng).then(paint).catch(()=>paint(fallback(lat,lng)));
-    else paint(fallback(lat,lng));
+      searchPharmacies(lat,lng).then(list=>{ state._livePh=list; paintPharmacy(); }).catch(()=>{ state._livePh=null; paintPharmacy(); });
+    else { state._livePh=null; paintPharmacy(); }
   };
   const def={lat:37.5636,lng:126.9869}; // Myeongdong fallback
   if(state._coords) run(state._coords.lat,state._coords.lng);
@@ -650,7 +795,7 @@ function initPharmacy(){
     navigator.geolocation.getCurrentPosition(p=>run(p.coords.latitude,p.coords.longitude),()=>run(def.lat,def.lng),{enableHighAccuracy:true,timeout:10000,maximumAge:0});
   else run(def.lat,def.lng);
 }
-function relocatePharmacy(){ state._coords=null; initPharmacy(); }
+function relocatePharmacy(){ state._coords=null; state._livePh=null; initPharmacy(); }
 
 /* ---------- render ---------- */
 function render(){
@@ -679,6 +824,7 @@ function render(){
 
 /* ---------- events ---------- */
 function pickConcern(k){ state.profile.concern=k; render(); }
+function pickRegion(k){ state.profile.region=k; render(); }
 function pickSkin(k){ state.profile.skin=k; render(); }
 function pickPreg(v){ state.profile.preg=v; render(); }
 function finishOnboarding(){ state.profileSet=true; state.screen="foryou"; state.tab="foryou"; render(); window.scrollTo(0,0); }
