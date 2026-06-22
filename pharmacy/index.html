@@ -166,23 +166,24 @@
    K-Pharmacy Guide — Phase 0 MVP (single file, no backend)
    ------------------------------------------------------------
    PHARMACY TAB (this build)
-   - Shows a CURATED list of pharmacies that carry K-beauty /
-     cosmeceutical lines (COSMETIC_PH below), sorted by distance
-     from the user. Other popular OTC items are widely stocked at
-     these stores too, so one list covers both.
-   - Geolocation (navigator.geolocation) is used only to sort by
-     distance and works independently of the map. If denied, it
-     falls back to a Myeongdong center and still lists everything.
+   - DATA: if KAKAO_JS_KEY is set, the app auto-loads ALL real nearby
+     pharmacies via Kakao category search (PM9) — Korean names + exact
+     coords + distance, no backend. Known beauty pharmacies (BEAUTY_NAMES)
+     are floated to the top with a ✓ badge. If the key is absent or the
+     search fails, it falls back to the curated FALLBACK_PH list.
+   - WHY ALL pharmacies: no dataset tags "sells cosmetics," and popular
+     items (PDRN creams, Madecassol, acne creams) are stocked at most
+     pharmacies, so showing all nearby + badging beauty stores is honest.
+   - Geolocation (navigator.geolocation) sorts by distance and works
+     independently of the map. If denied, falls back to a Myeongdong center.
    - The embedded map uses NAVER Maps (foreigners' #1 map in Korea).
      Set NAVER_MAP_KEY to your NAVER Cloud Platform Maps Client ID
      (loaded as ncpKeyId) and register your GitHub Pages domain
      (host only, no path/port) under the Maps Application. Without a
      key the list still works; only the visual map is skipped.
-   - Each pharmacy card has Naver / Google / Kakao directions buttons
-     (deep links) so tourists use whichever map app they already have.
-   - Coordinates in COSMETIC_PH are approximate samples. In
-     production, geocode partners or pull the public pharmacy
-     dataset (공공데이터포털 '전국 약국 정보 서비스') via a backend.
+   - Directions deep links are COORDINATE + Korean-name based, so they
+     work regardless of the user's app language (English search fails
+     because Korean place DBs are indexed by Korean names).
    ------------------------------------------------------------
    GEOLOCATION REQUIRES HTTPS. It will NOT work from file:// or in
    a sandboxed preview — deploy to GitHub Pages and open it there.
@@ -191,7 +192,8 @@
    (only when onlineSale!==false) + match score. Review with 약무 변호사.
    ============================================================ */
 
-const NAVER_MAP_KEY = "t1fi24amnf";
+const NAVER_MAP_KEY = "t1fi24amnf";   // map rendering (NAVER Cloud Maps Client ID)
+const KAKAO_JS_KEY  = "2f642b7caff49f5898770b7578fae5a0";          // live pharmacy search (Kakao Developers JavaScript key). Leave as-is to use the curated fallback list instead.
 
 const LANGS=[
   {code:"EN",name:"English"},{code:"JA",name:"日本語"},
@@ -219,9 +221,9 @@ const T={
     cmp_title:"Compare", cmp_card:"Cards", cmp_table:"Table",
     cmp_ingredient:"Ingredient", cmp_strength:"Use level", cmp_price:"Price", cmp_online:"Online",
     cmp_tip:"Cosmetics show buy links; medicines show information only.", cmp_empty:"Pick items in Search or your picks to compare them.",
-    find_ph:"Find a pharmacy nearby", ph_title:"Pharmacies with K-beauty lines", ph_sub:"Carrying cosmeceutical lines, near you.",
-    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_tax:"Tax refund", ph_english:"English",
-    ph_note:"These pharmacies carry cosmetic lines; popular OTC items are widely stocked too. We don't track live stock — show the Korean name to the pharmacist to check or order. Sample locations.",
+    find_ph:"Find a pharmacy nearby", ph_title:"Pharmacies near you", ph_sub:"Real pharmacies nearby. ✓ = known K-beauty stores.",
+    ph_loading:"Finding pharmacies nearby…", dir_label:"Directions", ph_verified:"K-beauty", ph_tax:"Tax refund", ph_english:"English",
+    ph_note:"Popular K-beauty items (PDRN creams, Madecassol, acne creams) are stocked at most pharmacies. ✓ marks well-known beauty pharmacies. We don't track live stock — show the Korean product name to the pharmacist to check or order.",
     foot:"This app provides general information and is not medical advice. Medicines are shown for information only and cannot be purchased through this app. Always consult a pharmacist."
   },
   JA:{ brand:"K-薬局ガイド", tab_foryou:"あなたに", tab_search:"検索", tab_pharmacy:"薬局",
@@ -243,9 +245,9 @@ const T={
     cmp_title:"比較", cmp_card:"カード", cmp_table:"表",
     cmp_ingredient:"成分", cmp_strength:"使用レベル", cmp_price:"価格", cmp_online:"オンライン",
     cmp_tip:"化粧品は購入リンク、医薬品は情報のみ表示します。", cmp_empty:"検索またはおすすめから商品を選んで比較してください。",
-    find_ph:"近くの薬局を探す", ph_title:"K-ビューティ取扱い薬局", ph_sub:"ドクターズコスメを扱う近くの薬局。",
-    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_tax:"免税", ph_english:"英語可",
-    ph_note:"これらの薬局は化粧品ラインを扱っており、人気のOTCも広く在庫があります。在庫はリアルタイムで把握していません。韓国語名を薬剤師に見せて確認・取り寄せてください。位置はサンプルです。",
+    find_ph:"近くの薬局を探す", ph_title:"近くの薬局", ph_sub:"近くの実在薬局。✓＝有名なK-ビューティ薬局。",
+    ph_loading:"近くの薬局を検索中…", dir_label:"ナビ", ph_verified:"K-ビューティ", ph_tax:"免税", ph_english:"英語可",
+    ph_note:"人気のK-ビューティ製品（PDRNクリーム、マデカソル、ニキビクリーム等）はほとんどの薬局で扱っています。✓は有名なビューティ薬局です。在庫はリアルタイムで把握していません。韓国語の製品名を薬剤師に見せて確認・取り寄せてください。",
     foot:"本アプリは一般情報であり医療助言ではありません。医薬品は情報提供のみで、本アプリでは購入できません。必ず薬剤師にご相談ください。"
   },
   ZH:{ brand:"K-药局指南", tab_foryou:"为你", tab_search:"搜索", tab_pharmacy:"药局",
@@ -267,9 +269,9 @@ const T={
     cmp_title:"对比", cmp_card:"卡片", cmp_table:"表格",
     cmp_ingredient:"成分", cmp_strength:"使用强度", cmp_price:"价格", cmp_online:"在线",
     cmp_tip:"化妆品显示购买链接；药品仅显示信息。", cmp_empty:"在搜索或推荐中选择产品进行对比。",
-    find_ph:"查找附近药局", ph_title:"售卖K-美妆系列的药局", ph_sub:"附近售卖药妆系列的药局。",
-    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_tax:"退税", ph_english:"可英文",
-    ph_note:"这些药局售卖化妆品系列，热门非处方药也大多有售。我们不追踪实时库存——请把韩文名出示给药师确认或订购。位置为示例。",
+    find_ph:"查找附近药局", ph_title:"附近的药局", ph_sub:"附近的真实药局。✓＝知名K-美妆药局。",
+    ph_loading:"正在查找附近药局…", dir_label:"导航", ph_verified:"K-美妆", ph_tax:"退税", ph_english:"可英文",
+    ph_note:"热门K-美妆产品（PDRN面霜、马德卡索、祛痘霜等）大多数药局都有售。✓为知名美妆药局。我们不追踪实时库存——请把韩文产品名出示给药师确认或订购。",
     foot:"本应用仅提供一般信息，非医疗建议。药品仅供信息参考，无法通过本应用购买。请务必咨询药师。"
   },
   ZT:{ brand:"K-藥局指南", tab_foryou:"為你", tab_search:"搜尋", tab_pharmacy:"藥局",
@@ -291,9 +293,9 @@ const T={
     cmp_title:"比較", cmp_card:"卡片", cmp_table:"表格",
     cmp_ingredient:"成分", cmp_strength:"使用強度", cmp_price:"價格", cmp_online:"線上",
     cmp_tip:"化妝品顯示購買連結；藥品僅顯示資訊。", cmp_empty:"在搜尋或推薦中選擇產品進行比較。",
-    find_ph:"尋找附近藥局", ph_title:"販售K-美妝系列的藥局", ph_sub:"附近販售藥妝系列的藥局。",
-    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_tax:"退稅", ph_english:"可英文",
-    ph_note:"這些藥局販售化妝品系列，熱門非處方藥也大多有售。我們不追蹤即時庫存——請把韓文名出示給藥師確認或訂購。位置為示例。",
+    find_ph:"尋找附近藥局", ph_title:"附近的藥局", ph_sub:"附近的真實藥局。✓＝知名K-美妝藥局。",
+    ph_loading:"正在尋找附近藥局…", dir_label:"導航", ph_verified:"K-美妝", ph_tax:"退稅", ph_english:"可英文",
+    ph_note:"熱門K-美妝產品（PDRN面霜、馬德卡索、祛痘霜等）大多數藥局都有售。✓為知名美妝藥局。我們不追蹤即時庫存——請把韓文產品名出示給藥師確認或訂購。",
     foot:"本應用僅提供一般資訊，非醫療建議。藥品僅供資訊參考，無法透過本應用購買。請務必諮詢藥師。"
   }
 };
@@ -369,15 +371,20 @@ const PRODUCTS=[
    ingredient:{EN:"Hydrocolloid",JA:"ハイドロコロイド",ZH:"水胶体"},indication:{EN:"Blemish protection",JA:"トラブル保護",ZH:"痘痘保护"},strength:"daily",price:[3000,6000],pregSafe:true,views:6500}
 ];
 
-/* Curated pharmacies that carry K-beauty / cosmeceutical lines.
-   Coordinates are approximate samples — replace with geocoded partners. */
-const COSMETIC_PH=[
-  {nm:"Oasis Pharmacy · Myeongdong",lat:37.5634,lng:126.9839,addr:"Jung-gu, Seoul",english:true,tax:true,lines:"PDRN · Acne · Centella"},
-  {nm:"Ready Young Pharmacy · Hongdae",lat:37.5556,lng:126.9237,addr:"Mapo-gu, Seoul",english:true,tax:true,lines:"PDRN · Cica · Brightening"},
-  {nm:"Ready Young Pharmacy · Seongsu",lat:37.5446,lng:127.0560,addr:"Seongdong-gu, Seoul",english:true,tax:false,lines:"PDRN · Centella"},
-  {nm:"Optima Wellness Museum · Gangnam",lat:37.4979,lng:127.0276,addr:"Gangnam-gu, Seoul",english:true,tax:true,lines:"PDRN · Anti-aging"},
-  {nm:"Green Cross Pharmacy · Dongdaemun",lat:37.5703,lng:127.0094,addr:"Jung-gu, Seoul",english:true,tax:true,lines:"Acne · Brightening"}
+/* Curated REAL beauty-focused pharmacies (Korean names from press coverage).
+   Used (a) as the fallback list when no Kakao key is set, and (b) as the
+   "verified K-beauty" name set to badge live Kakao results.
+   When KAKAO_JS_KEY is set, the app auto-loads ALL real nearby pharmacies
+   (Korean names + exact coords) via Kakao category search instead. */
+const FALLBACK_PH=[
+  {nmKo:"오아시스약국 명동",nmEn:"Oasis Pharmacy (Myeongdong)",lat:37.5634,lng:126.9839,area:"Myeongdong, Seoul",lines:"Dr.Reju-All · PDRN · Acne",verified:true},
+  {nmKo:"레디영약국 명동",nmEn:"Ready Young Pharmacy (Myeongdong)",lat:37.5609,lng:126.9853,area:"Myeongdong, Seoul",lines:"PDRN · Centella · Brightening",verified:true},
+  {nmKo:"레디영약국 홍대",nmEn:"Ready Young Pharmacy (Hongdae)",lat:37.5556,lng:126.9237,area:"Hongdae, Seoul",lines:"Dr.Reju-All · Cica · Brightening",verified:true},
+  {nmKo:"레디영약국 성수",nmEn:"Ready Young Pharmacy (Seongsu)",lat:37.5446,lng:127.0560,area:"Seongsu, Seoul",lines:"PDRN · Centella",verified:true},
+  {nmKo:"옵티마웰니스뮤지엄약국",nmEn:"Optima Wellness Museum Pharmacy",lat:37.4979,lng:127.0276,area:"Gangnam, Seoul",lines:"PDRN · Anti-aging",verified:true}
 ];
+/* Name tokens used to badge a live Kakao result as a known beauty pharmacy. */
+const BEAUTY_NAMES=["오아시스약국","레디영약국","옵티마웰니스뮤지엄","베리뉴약국","퓨어약국"];
 
 const state={ lang:"EN", tab:"foryou", screen:"foryou", profileSet:false,
   profile:{concern:"acne",skin:"combo",preg:false}, search:"", sort:"popular",
@@ -534,15 +541,17 @@ function distKm(aLat,aLng,bLat,bLng){
   return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
 }
 function fmtDist(km){ return km<1?Math.round(km*1000)+" m":km.toFixed(1)+" km"; }
-const naverDir=p=>`https://map.naver.com/p/search/${encodeURIComponent(p.nm)}`;
+const naverDir=p=>`https://map.naver.com/p/search/${encodeURIComponent(p.nmKo)}`;
 const googleDir=p=>`https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
-const kakaoDir=p=>`https://map.kakao.com/link/to/${encodeURIComponent(p.nm)},${p.lat},${p.lng}`;
+const kakaoDir=p=>`https://map.kakao.com/link/to/${encodeURIComponent(p.nmKo)},${p.lat},${p.lng}`;
 function renderPhList(list){
   const el=$("#phlist"); if(!el) return;
-  el.innerHTML=list.map(p=>`<div class="ph"><div class="top"><span class="nm">${p.nm}</span>
-    <span class="tag">${p.english?t("ph_english"):""}${p.english&&p.tax?" · ":""}${p.tax?t("ph_tax"):""}</span></div>
-    <div class="sub"><span>◉ ${fmtDist(p._d)}</span><span>${p.addr}</span></div>
-    <div class="lines">${p.lines}</div>
+  if(!list.length){ el.innerHTML=`<p class="empty">—</p>`; return; }
+  el.innerHTML=list.map(p=>`<div class="ph"><div class="top">
+      <span class="nm">${p.nmKo}${p.nmEn?` <span class="prom">${p.nmEn}</span>`:""}</span>
+      ${p.verified?`<span class="tag">✓ ${t("ph_verified")}</span>`:""}</div>
+    <div class="sub"><span>◉ ${fmtDist(p._d)}</span>${p.area?`<span>${p.area}</span>`:""}</div>
+    ${p.lines?`<div class="lines">${p.lines}</div>`:""}
     <div class="dir"><span class="dirlbl">${t("dir_label")}</span>
       <a href="${naverDir(p)}" target="_blank" rel="noopener nofollow">Naver</a>
       <a href="${googleDir(p)}" target="_blank" rel="noopener nofollow">Google</a>
@@ -571,15 +580,53 @@ function drawMap(lat,lng,list){
   new naver.maps.Marker({position:new naver.maps.LatLng(lat,lng),map,icon:{content:'<div style="width:16px;height:16px;background:#185FA5;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #185FA5;"></div>',anchor:new naver.maps.Point(8,8)}});
   list.forEach(p=>new naver.maps.Marker({position:new naver.maps.LatLng(p.lat,p.lng),map}));
 }
+/* Live pharmacy data via Kakao category search (PM9 = pharmacy). Headless:
+   loads only the 'services' library, no Kakao map shown. */
+let kakaoPromise=null;
+function ensureKakaoServices(){
+  if(kakaoPromise) return kakaoPromise;
+  kakaoPromise=new Promise((res,rej)=>{
+    if(window.kakao&&window.kakao.maps&&window.kakao.maps.services){ res(); return; }
+    if(!KAKAO_JS_KEY||KAKAO_JS_KEY==="REPLACE_WITH_YOUR_KAKAO_JS_KEY"){ rej("no-key"); return; }
+    const s=document.createElement("script");
+    s.src="https://dapi.kakao.com/v2/maps/sdk.js?autoload=false&libraries=services&appkey="+KAKAO_JS_KEY;
+    s.onload=()=>window.kakao.maps.load(()=>res());
+    s.onerror=()=>rej("load-failed");
+    document.head.appendChild(s);
+  });
+  return kakaoPromise;
+}
+const isBeautyName=n=>BEAUTY_NAMES.some(k=>n&&n.indexOf(k)>=0);
+function searchPharmacies(lat,lng){
+  return new Promise((res,rej)=>{
+    ensureKakaoServices().then(()=>{
+      new kakao.maps.services.Places().categorySearch("PM9",(data,status)=>{
+        if(status!==kakao.maps.services.Status.OK){ rej("no-result"); return; }
+        const list=data.map(d=>({
+          nmKo:d.place_name, nmEn:"", lat:+d.y, lng:+d.x,
+          area:d.road_address_name||d.address_name||"",
+          _d:d.distance?(+d.distance)/1000:distKm(lat,lng,+d.y,+d.x),
+          verified:isBeautyName(d.place_name), place_url:d.place_url
+        })).sort((a,b)=>(b.verified-a.verified)||(a._d-b._d));
+        res(list);
+      },{location:new kakao.maps.LatLng(lat,lng),radius:20000,sort:kakao.maps.services.SortBy.DISTANCE,size:15});
+    }).catch(rej);
+  });
+}
 function initPharmacy(){
+  const fallback=(lat,lng)=>FALLBACK_PH.map(p=>({...p,_d:distKm(lat,lng,p.lat,p.lng)})).sort((a,b)=>a._d-b._d);
   const run=(lat,lng)=>{
     state._coords={lat,lng};
-    const list=COSMETIC_PH.map(p=>({...p,_d:distKm(lat,lng,p.lat,p.lng)})).sort((a,b)=>a._d-b._d);
-    renderPhList(list);
-    ensureNaver().then(()=>drawMap(lat,lng,list)).catch(err=>{
-      if(err==="no-key") console.warn("[K-Pharmacy] Set NAVER_MAP_KEY + register your domain to show the map.");
-      const m=$("#kkmap"); if(m) m.style.display="none";
-    });
+    const paint=list=>{
+      renderPhList(list);
+      ensureNaver().then(()=>drawMap(lat,lng,list)).catch(err=>{
+        if(err==="no-key") console.warn("[K-Pharmacy] Set NAVER_MAP_KEY + register your domain to show the map.");
+        const m=$("#kkmap"); if(m) m.style.display="none";
+      });
+    };
+    if(KAKAO_JS_KEY&&KAKAO_JS_KEY!=="REPLACE_WITH_YOUR_KAKAO_JS_KEY")
+      searchPharmacies(lat,lng).then(paint).catch(()=>paint(fallback(lat,lng)));
+    else paint(fallback(lat,lng));
   };
   const def={lat:37.5636,lng:126.9869}; // Myeongdong fallback
   if(state._coords) run(state._coords.lat,state._coords.lng);
