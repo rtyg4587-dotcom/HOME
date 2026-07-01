@@ -922,18 +922,17 @@ function coinSleeve(s){
 
   let w={...SLEEVE_W[key]};
 
-  // ETH/BTC 게이트
+  // ETH/BTC 게이트 — 상태는 비율로 독립 판정(단계·목표비중과 무관)
   const raw=$("ethBtcIn")?parseFloat($("ethBtcIn").value):NaN;
   const ethKnown=!isNaN(raw)&&raw>0; const ethBtc=ethKnown?raw:null;
-  let ethGate;
+  let ethGate = !ethKnown ? "unknown" : (ethBtc>=ETHBTC_SWITCH ? "open" : "hold");
   if(key==="uptrend"){
-    if(ethKnown&&ethBtc>=ETHBTC_SWITCH){w.eth=30;w.btc=50;label="②b 상승중";ethGate="open";}
-    else if(ethKnown){w.eth=20;w.btc=60;label="②a 상승초";ethGate="hold";}
-    else{label="② 상승";ethGate="unknown";}
+    if(ethKnown&&ethBtc>=ETHBTC_SWITCH){w.eth=30;w.btc=50;label="②b 상승중";}
+    else if(ethKnown){w.eth=20;w.btc=60;label="②a 상승초";}
+    else{label="② 상승";}
   }else{
-    if(ethKnown&&ethBtc<ETHBTC_SWITCH&&w.eth>20){w.btc+=(w.eth-20);w.eth=20;ethGate="hold";}
-    else if(ethKnown&&ethBtc>=ETHBTC_SWITCH)ethGate="open";
-    else ethGate="unknown";
+    // 그 외 단계: ETH/BTC가 스위치 미만이고 목표 ETH가 20 초과면 20으로 캡(BTC로)
+    if(ethKnown&&ethBtc<ETHBTC_SWITCH&&w.eth>20){w.btc+=(w.eth-20);w.eth=20;}
   }
   // MSTR 하드캡
   if(w.mstr>SLEEVE_CAP_MSTR){w.btc+=(w.mstr-SLEEVE_CAP_MSTR);w.mstr=SLEEVE_CAP_MSTR;}
