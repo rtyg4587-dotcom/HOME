@@ -1,0 +1,80 @@
+name: Update MSTR data
+
+# 평일 미국장 기준 2회 + 수동 실행
+on:
+  schedule:
+    - cron: '0 14 * * 1-5'   # 미장 오전
+    - cron: '0 22 * * 1-5'   # 미장 마감 후
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mstr-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch MSTR data
+        run: |
+          set -e
+          UA="Mozilla/5.0 (compatible; mstr-bot/1.0)"
+          PRICE=""; MCAP="null"; BTC="null"; SRC=""
+
+          # 가격 + 시가총액: Yahoo (crumb 인증)
+          curl -s -c /tmp/cj.txt "https://fc.yahoo.com/" -H "User-Agent: $UA" -o /dev/null || true
+          CRUMB=$(curl -s -b /tmp/cj.txt "https://query1.finance.yahoo.com/v1/test/getcrumb" -H "User-Agent: $UA" || true)
+          if [ -n "$CRUMB" ] && [ "${#CRUMB}" -lt 40 ]; then
+            Q=$(curl -s -b /tmp/cj.txt "https://query1.finance.yahoo.com/v7/finance/quote?symbols=MSTR&crumb=$CRUMB" -H "User-Agent: $UA" || true)
+            P=$(echo "$Q" | jq -r '.quoteResponse.result[0].regularMarketPrice // empty' 2>/dev/null || true)
+            M=$(echo "$Q" | jq -r '.quoteResponse.result[0].marketCap // empty' 2>/dev/null || true)
+            if [ -n "$P" ] && [ "$P" != "null" ]; then PRICE="$P"; SRC="Yahoo"; fi
+            if [ -n "$M" ] && [ "$M" != "null" ]; then MCAP="$M"; fi
+          fi
+
+          # 가격 폴백 1: Yahoo v8 chart (crumb 불필요)
+          if [ -z "$PRICE" ]; then
+            Y=$(curl -sf -H "User-Agent: $UA" "https://query1.finance.yahoo.com/v8/finance/chart/MSTR?interval=1d&range=1d" || true)
+            P=$(echo "$Y" | jq -r '.chart.result[0].meta.regularMarketPrice // empty' 2>/dev/null || true)
+            if [ -n "$P" ] && [ "$P" != "null" ]; then PRICE="$P"; SRC="Yahoo"; fi
+          fi
+          # 가격 폴백 2: Stooq
+          if [ -z "$PRICE" ]; then
+            C=$(curl -sf -H "User-Agent: $UA" "https://stooq.com/q/l/?s=mstr.us&f=sd2t2ohlcv&h&e=csv" || true)
+            P=$(echo "$C" | tail -1 | cut -d',' -f7)
+            if echo "$P" | grep -Eq '^[0-9]+(\.[0-9]+)?$'; then PRICE="$P"; SRC="Stooq"; fi
+          fi
+
+          # 보유 BTC: CoinGecko 공개기업 보유량 (무키)
+          T=$(curl -sf -H "User-Agent: $UA" "https://api.coingecko.com/api/v3/companies/public_treasury/bitcoin" || true)
+          B=$(echo "$T" | jq -r '.companies[] | select((.symbol|test("MSTR")) or (.name|test("Strateg|MicroStrateg"))) | .total_holdings' 2>/dev/null | head -1 || true)
+          if echo "$B" | grep -Eq '^[0-9]+(\.[0-9]+)?$'; then BTC="$B"; fi
+          # BTC 폴백: 기존 mstr.json 값 유지
+          if [ "$BTC" = "null" ] && [ -f mstr.json ]; then
+            OLD=$(jq -r '.btc // empty' mstr.json 2>/dev/null || true)
+            if [ -n "$OLD" ] && [ "$OLD" != "null" ]; then BTC="$OLD"; fi
+          fi
+
+          if [ -z "$PRICE" ]; then echo "::warning::가격 수신 실패 — mstr.json 유지"; exit 0; fi
+
+          NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          printf '{"price": %s, "marketCap": %s, "btc": %s, "src": "%s", "asof": "%s"}\n' \
+            "$PRICE" "$MCAP" "$BTC" "$SRC" "$NOW" > mstr.json
+          echo "결과:"; cat mstr.json
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add mstr.json
+          if git diff --cached --quiet; then
+            echo "변경 없음 — 커밋 생략"
+          else
+            git commit -m "chore: update MSTR data [skip ci]"
+            git push
+          fi
