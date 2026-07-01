@@ -584,11 +584,10 @@
 const HALVINGS=["2012-11-28","2016-07-09","2020-05-11","2024-04-20"].map(d=>new Date(d));
 const HALVING_NEXT=new Date("2028-04-15");
 const BTC_CIRC=19_900_000;
-// ┌─ MSTR mNAV 수동 갱신값 (여기 2줄만 분기 1회 정도 수정) ───────────────
-// │  확인처: strategy.com/shares (주식수) · bitcointreasuries.net (보유 BTC)
-// │  마지막 갱신: 2026-06-21
-const MSTR_SHARES=308e6;       // 기본 발행주식(Class A+B) 추정
-const MSTR_BTC=847_363;        // 보유 BTC
+// ┌─ MSTR mNAV 폴백값 (Actions가 mstr.json을 채우면 이 값은 안 씀) ────────
+// │  mstr.json의 marketCap 있으면 주식수 불필요 · btc는 CoinGecko 자동
+const MSTR_SHARES=308e6;       // 폴백: mstr.json에 marketCap 없을 때만
+const MSTR_BTC=847_363;        // 폴백: mstr.json에 btc 없을 때만
 // └──────────────────────────────────────────────────────────────
 const DAY=86400000, MO=30.44*DAY;
 
@@ -1041,6 +1040,7 @@ const $=id=>document.getElementById(id);
 let STATE=null;
 let ethBtcManual=false, ethBtcLast=null;
 let mstrManual=false, mstrLast=null;
+let mstrMcap=null, mstrBtc=null;
 let lastSleeveW=null;
 
 function actClass(a){return a==="buy"?"up":a==="sell"?"down":a==="wait"?"":""}
@@ -1152,8 +1152,11 @@ function render(s,stable){
 }
 function renderMstr(){
   if(!STATE)return; const px=parseFloat($("mstrPrice").value);
-  if(!px||px<=0){$("mnav").textContent="현재가 입력";$("mstrVerdict").textContent="—";if(STATE){STATE._mnav=null;renderSleeve(STATE);}return;}
-  const mnav=(px*MSTR_SHARES)/(MSTR_BTC*STATE.price);
+  const btcHold = mstrBtc ?? MSTR_BTC;
+  let mnav=null;
+  if(!mstrManual && mstrMcap>0){ mnav = mstrMcap/(btcHold*STATE.price); }   // 시총 직접 → 주식수 불필요
+  else if(px>0){ mnav = (px*MSTR_SHARES)/(btcHold*STATE.price); }           // 폴백: 가격 × 폴백 주식수
+  if(!(mnav>0)){$("mnav").textContent="현재가 입력";$("mstrVerdict").textContent="—";STATE._mnav=null;renderSleeve(STATE);return;}
   const{row,verdict}=mstrVerdict(mnav,STATE.col);
   $("mnav").innerHTML=`${mnav.toFixed(2)}x <span style="color:var(--muted)">(${row})</span>`;
   const cls=verdict.includes("매집")?"b-buy":verdict.includes("매도")?"b-sell":"b-wait";
@@ -1294,7 +1297,7 @@ async function fetchMstrPrice(){
   // 0) 같은 출처 캐시 (GitHub Actions가 갱신) — CORS·프록시 불필요, 가장 안정
   try{
     const r=await fetch("mstr.json?_="+Date.now());   // 캐시 우회
-    if(r.ok){const j=await r.json(); if(j&&j.price>0)return{v:+j.price,src:(j.src||"캐시"),asof:j.asof};}
+    if(r.ok){const j=await r.json(); if(j&&j.price>0)return{v:+j.price,src:(j.src||"캐시"),asof:j.asof,mcap:(j.marketCap>0?+j.marketCap:null),btc:(j.btc>0?+j.btc:null)};}
   }catch(e){}
   // 1) Stooq 직접
   try{
@@ -1338,7 +1341,7 @@ async function run(){
     render(s,stable);
     try{
       const mp=await fetchMstrPrice();
-      if(mp){ mstrLast=mp.v;
+      if(mp){ mstrLast=mp.v; mstrMcap=mp.mcap??null; mstrBtc=mp.btc??null;
         if(!mstrManual) $("mstrPrice").value=mp.v.toFixed(2);
         $("mstrSrc").textContent = mstrManual ? "수동 입력 (실시간 버튼으로 복귀)" : `실시간 · ${mp.src} $${mp.v.toFixed(2)}${mp.asof?` (${mp.asof.slice(5,10)})`:""}`;
         $("mstrSrc").className = "csl-ethsrc"+(mstrManual?"":" live");
