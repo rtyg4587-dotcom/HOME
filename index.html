@@ -449,14 +449,13 @@
       <div class="csl-gates" id="cslGates"></div>
       <div class="csl-assets" id="cslAssets"></div>
       <details class="help"><summary>단계별 비중 · 게이트 안내</summary><div class="body">
-        전략 단계(Playbook)에 맞춰 <b>코인 슬리브 100% 기준</b> 목표 비중을 자동 산출합니다.
-        <div class="st"><span class="n">①</span><b>바닥</b> — 60·20·15·현금5. 바닥점수 3↑이면 '풀매집', 2 이하면 '진입권'(매집 시작·풀매집 대기).</div>
-        <div class="st"><span class="n">②</span><b>상승</b> — ETH/BTC 0.030 회복 전 ②a(60·20·20), 회복 후 ②b(50·30·20).</div>
-        <div class="st"><span class="n">③</span><b>중간조정</b>(상승장 내) — 50·20·10·현금20. 헤지·저점 분할 매수.</div>
-        <div class="st"><span class="n">▾</span><b>하락기</b>(천장 후 베어) — 25·5·0·현금70. 현금 보존·숏, 추격매수 금지. <em>200주선 하회·반감기+18M 이후·midScore 낮음으로 자동 구분.</em></div>
-        <div class="st"><span class="n">④</span><b>천장</b> — 30·10·0·현금60. 롱 청산·숏 전환.</div>
-        <div class="st" style="margin-top:11px;border-top:1px solid var(--line);padding-top:9px"><b>ETH 게이트</b> — ETH/BTC가 0.030 미만이면 ETH 증액을 보류하고 BTC로 돌립니다(다년 약세 추세 반영).</div>
-        <div class="st"><b>MSTR 게이트</b> — 위 'MSTR 매집 판정'에 현재가를 넣으면 mNAV로 매수 적극성을 조절(≤0.6 적극 → 1.3↑ 축소). 비중은 항상 ≤20% 하드캡.</div>
+        전략 단계에 맞춰 <b>코인 슬리브 100% 기준</b> 목표 비중(BTC·ETH·현금)을 자동 산출합니다.
+        <div class="st"><span class="n">①</span><b>바닥</b> — BTC65·ETH30·현금5. 바닥점수 3↑이면 '풀매집', 2 이하면 '진입권'(매집 시작·풀매집 대기).</div>
+        <div class="st"><span class="n">②</span><b>상승</b> — ETH/BTC 0.030 회복 전 ②a(70·30), 회복 후 ②b(60·40).</div>
+        <div class="st"><span class="n">③</span><b>중간조정</b>(상승장 내) — 55·25·현금20. 헤지·저점 분할 매수.</div>
+        <div class="st"><span class="n">▾</span><b>하락기</b>(천장 후 베어) — 25·5·현금70. 현금 보존·숏, 추격매수 금지. <em>200주선 하회·반감기+18M 이후·midScore 낮음으로 자동 구분.</em></div>
+        <div class="st"><span class="n">④</span><b>천장</b> — 30·10·현금60. 롱 청산·숏 전환.</div>
+        <div class="st" style="margin-top:11px;border-top:1px solid var(--line);padding-top:9px"><b>ETH 게이트</b> — ETH/BTC가 0.030 미만이면 상승장에서 ETH 증액을 보류(②a), 회복하면 ETH를 40까지 증액(②b).</div>
         <div class="st"><b>데드라인 글라이드다운</b> — 현금 필요 시점(스크립트 상단 DEADLINE) 18·12·6개월 전부터 신호와 무관하게 현금 플로어를 +10·20·35%p 끌어올립니다.</div>
       </div></details>
     </div>
@@ -467,7 +466,7 @@
         <tr><th>자산</th><th>목표</th><th>목표액</th><th>현재 보유</th><th>증감</th></tr>
         <tr><td>BTC</td><td id="rbw_btc">—</td><td id="rbt_btc">—</td><td><input class="rb-cur" id="rbc_btc" inputmode="decimal" placeholder="$0"></td><td id="rbd_btc">—</td></tr>
         <tr><td>ETH</td><td id="rbw_eth">—</td><td id="rbt_eth">—</td><td><input class="rb-cur" id="rbc_eth" inputmode="decimal" placeholder="$0"></td><td id="rbd_eth">—</td></tr>
-        <tr><td>MSTR</td><td id="rbw_mstr">—</td><td id="rbt_mstr">—</td><td><input class="rb-cur" id="rbc_mstr" inputmode="decimal" placeholder="$0"></td><td id="rbd_mstr">—</td></tr>
+        <tr style="display:none"><td>MSTR</td><td id="rbw_mstr">—</td><td id="rbt_mstr">—</td><td><input class="rb-cur" id="rbc_mstr" inputmode="decimal" placeholder="$0"></td><td id="rbd_mstr">—</td></tr>
         <tr><td>현금</td><td id="rbw_cash">—</td><td id="rbt_cash">—</td><td><input class="rb-cur" id="rbc_cash" inputmode="decimal" placeholder="$0"></td><td id="rbd_cash">—</td></tr>
       </table>
       <div class="rbnote">현재 단계의 목표 비중으로 자동 계산됩니다($ 기준). 총액만 넣으면 <b>목표액</b>, 현재 보유까지 채우면 <b>증감(매수 +/매도 −)</b>이 나옵니다.</div>
@@ -475,7 +474,7 @@
         목표액 = 총 평가액 × 단계 목표 비중. 증감은 목표액 − 현재 보유. <b>+면 매수, −면 매도</b>해서 목표 배분에 맞춥니다. 한 번에 맞추기보다 <b>분할</b>로 접근하세요(특히 MSTR·하락기). 데드라인 글라이드다운이 켜지면 현금 목표가 자동으로 올라가 반영됩니다.
       </div></details>
     </div>
-    <div class="card">
+    <div class="card" style="display:none">
       <h3><span class="dot"></span>MSTR 매집 판정</h3>
       <div class="mstr-in">
         <input id="mstrPrice" inputmode="decimal" placeholder="MSTR 현재가 ($, 실시간 자동)">
@@ -597,13 +596,13 @@ const DEADLINE_MODE = true;                 // 데드라인 글라이드다운 o
 const ETHBTC_SWITCH = 0.030;                // ETH 증액 스위치 (주봉)
 const SLEEVE_CAP_MSTR = 20;                 // MSTR 하드캡(%)
 const SLEEVE_W = {
-  bottom:    {btc:60,eth:20,mstr:15,cash:5},
-  bottomEdge:{btc:60,eth:20,mstr:15,cash:5},
-  uptrend:   {btc:55,eth:25,mstr:20,cash:0},
-  correction:{btc:50,eth:20,mstr:10,cash:20},
-  decline:   {btc:25,eth:5, mstr:0, cash:70},
-  top:       {btc:30,eth:10,mstr:0, cash:60},
-  neutral:   {btc:55,eth:20,mstr:10,cash:15},
+  bottom:    {btc:65,eth:30,mstr:0,cash:5},
+  bottomEdge:{btc:65,eth:30,mstr:0,cash:5},
+  uptrend:   {btc:60,eth:40,mstr:0,cash:0},
+  correction:{btc:55,eth:25,mstr:0,cash:20},
+  decline:   {btc:25,eth:5, mstr:0,cash:70},
+  top:       {btc:30,eth:10,mstr:0,cash:60},
+  neutral:   {btc:60,eth:25,mstr:0,cash:15},
 };
 const SLEEVE_COL={btc:"var(--gold)",eth:"var(--hold)",mstr:"#b57be8",cash:"var(--faint)"};
 const SLEEVE_NM={btc:"BTC",eth:"ETH",mstr:"MSTR",cash:"현금"};
@@ -927,13 +926,11 @@ function coinSleeve(s){
   const ethKnown=!isNaN(raw)&&raw>0; const ethBtc=ethKnown?raw:null;
   let ethGate = !ethKnown ? "unknown" : (ethBtc>=ETHBTC_SWITCH ? "open" : "hold");
   if(key==="uptrend"){
-    if(ethKnown&&ethBtc>=ETHBTC_SWITCH){w.eth=30;w.btc=50;label="②b 상승중";}
-    else if(ethKnown){w.eth=20;w.btc=60;label="②a 상승초";}
+    if(ethKnown&&ethBtc>=ETHBTC_SWITCH){w.eth=40;w.btc=60;label="②b 상승중";}
+    else if(ethKnown){w.eth=30;w.btc=70;label="②a 상승초";}
     else{label="② 상승";}
-  }else{
-    // 그 외 단계: ETH/BTC가 스위치 미만이고 목표 ETH가 20 초과면 20으로 캡(BTC로)
-    if(ethKnown&&ethBtc<ETHBTC_SWITCH&&w.eth>20){w.btc+=(w.eth-20);w.eth=20;}
   }
+  // 비-상승 단계는 base preset 유지 (이미 ETH-약세 환경 반영)
   // MSTR 하드캡
   if(w.mstr>SLEEVE_CAP_MSTR){w.btc+=(w.mstr-SLEEVE_CAP_MSTR);w.mstr=SLEEVE_CAP_MSTR;}
   // MSTR mNAV 밴드 (MSTR 카드 입력 재사용)
@@ -955,7 +952,7 @@ function coinSleeve(s){
 function sleeveBarHTML(w,segCls){
   const order=["btc","eth","mstr","cash"];
   const bar=order.map(k=>w[k]>0?`<div class="${segCls}" style="flex-basis:${w[k]}%;background:${SLEEVE_COL[k]}">${w[k]>=8?w[k]:""}</div>`:"").join("");
-  const leg=order.map(k=>`<span><i style="background:${SLEEVE_COL[k]}"></i>${SLEEVE_NM[k]} <b>${w[k]}</b></span>`).join("");
+  const leg=order.filter(k=>w[k]>0).map(k=>`<span><i style="background:${SLEEVE_COL[k]}"></i>${SLEEVE_NM[k]} <b>${w[k]}</b></span>`).join("");
   return {bar,leg};
 }
 function renderSleeve(s){
@@ -972,7 +969,6 @@ function renderSleeve(s){
   if(sl.ethGate==="open")g.push(`<div class="csl-gate g-buy"><b>ETH 증액 허용</b> — ETH/BTC ${sl.ethBtc.toFixed(3)} ≥ 0.030</div>`);
   else if(sl.ethGate==="hold")g.push(`<div class="csl-gate"><b>ETH 증액 보류</b> — ETH/BTC ${sl.ethBtc?sl.ethBtc.toFixed(3):""} &lt; 0.030 (다년 약세)</div>`);
   else g.push(`<div class="csl-gate">ETH/BTC 입력 시 증액 게이트 작동</div>`);
-  g.push(`<div class="csl-gate ${sl.mstrBand.tone}"><b>MSTR</b> ${sl.mstrBand.txt} · 하드캡 ≤20%</div>`);
   if(sl.tier>0)g.push(`<div class="csl-gate ${sl.monthsLeft<=6?'g-sell':'g-wait'}"><b>데드라인 ${sl.monthsLeft}개월</b> — 글라이드다운 현금 +${sl.tier}%p (신호보다 우선)</div>`);
   else g.push(`<div class="csl-gate"><b>데드라인 ${sl.monthsLeft}개월</b> — 18개월 이내 진입 시 현금 플로어 가동</div>`);
   // 유동성 연동 (스테이블코인 30일 증감 — 확인 신호, 비중은 안 바꿈)
@@ -990,8 +986,7 @@ function renderSleeve(s){
 
   $("cslAssets").innerHTML=
     `<div class="csl-arow"><span class="csl-atag" style="background:var(--gold)">BTC</span><span>${act.btc}</span></div>`+
-    `<div class="csl-arow"><span class="csl-atag" style="background:var(--hold)">ETH</span><span>${act.eth}</span></div>`+
-    `<div class="csl-arow"><span class="csl-atag" style="background:#b57be8">MSTR</span><span>${act.mstr}</span></div>`;
+    `<div class="csl-arow"><span class="csl-atag" style="background:var(--hold)">ETH</span><span>${act.eth}</span></div>`;
 
   const hb=sleeveBarHTML(sl.w,"halloc-seg");
   $("heroAllocBar").innerHTML=hb.bar; $("heroAllocLeg").innerHTML=hb.leg;
